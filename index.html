@@ -48,7 +48,7 @@ body::before{content:'';position:fixed;inset:0;
 .xp-track{width:130px;height:5px;background:var(--muted);border-radius:3px;overflow:hidden}
 .xp-fill{height:100%;background:linear-gradient(90deg,var(--teal),var(--violet));
   border-radius:3px;transition:width .5s cubic-bezier(.25,.8,.25,1)}
-.lvl-badge{background:linear-gradient(135deg,var(--teal),var(--violet));
+.lvl-badge{cursor:default;user-select:none;background:linear-gradient(135deg,var(--teal),var(--violet));
   font-family:'Syne',sans-serif;font-weight:800;font-size:9.5px;color:#fff;
   padding:3px 9px;border-radius:20px;white-space:nowrap}
 .hdr-btn{background:none;border:1px solid var(--muted);color:var(--dim);
@@ -439,14 +439,14 @@ const PHASES = [
     {id:'p0-1',t:'Kernthese verinnerlicht: Ein Produkt kann funktionieren – und trotzdem kein Business sein',tip:'Das ist die härteste Wahrheit dieser Session. Viele Teams haben ein Produkt. Wenige haben ein tragfähiges Unternehmen.'},
     {id:'p0-2',t:'Leitfrage als Arbeitsanker: „Wie wird aus einem Produkt ein tragfähiges Unternehmen?"',tip:'Diese Frage strukturiert alle fünf Workshops heute.'},
     {id:'p0-3',t:'Verstanden: Erfolg entsteht an der Schnittstelle von Modell und Realität – nicht im Team, sondern im Markt',tip:'Ein Business entsteht nicht im Team – sondern im Markt. (Context = Realitäts-Check)'},
-    {id:'p0-4',t:'CB Insights Reality Check verarbeitet: Startups scheitern primär an Kapital (38%), Marktbedarf (35%) und Wettbewerb (20%) – selten am Produkt',tip:'Quelle: CB Insights (2026). Implikation: Eure Arbeit heute ist die Antwort auf genau diese drei Scheitergründe.'},
-    {id:'p0-5',t:'Klares Ziel für heute gesetzt: Aus dem Produkt wird ein System mit Logik, Prozessen, Ethik und Finanzen',tip:'Am Ende dieser Session habt ihr nicht mehr nur ein Produkt – ihr habt ein beschreibbares Unternehmen.'},
+    {id:'p0-4',t:'CB Insights Reality Check verarbeitet: Startups scheitern primär an Kapital (38%), Marktbedarf (35%) und Wettbewerb (20%) – selten am Produkt',tip:'Quelle: CB Insights (2026). Implikation: Die Arbeit dieser Session ist die Antwort auf genau diese drei Scheitergründe.'},
+    {id:'p0-5',t:'Klares Ziel für heute gesetzt: Aus dem Produkt wird ein System mit Logik, Prozessen, Ethik und Finanzen',tip:'Am Ende dieser Session hat das Team nicht mehr nur ein Produkt – es hat ein beschreibbares Unternehmen.'},
   ]},
   {id:'p1',icon:'🌍',num:'01',hex:'#0DD6D6',title:'Workshop I · Context Canvas',sub:'Das externe Umfeld systematisch verstehen · 20 Min.',items:[
     {id:'p1-1',t:'Context Canvas Methode verstanden: Externe Kräfte bestimmen den Spielraum des Ventures (Design a Better Business)',tip:'Van Der Pijl, Lokitz & Solomon (2016). Der Canvas macht Annahmen sichtbar und externe Realität greifbar.'},
-    {id:'p1-2',t:'Demografie analysiert: Wer sind die Menschen in eurem Markt – und wie verändern sie sich?',tip:'Altert eure Zielgruppe? Wächst sie? Verändert sich ihr Kaufverhalten? Urbanisierung, Bildungsniveau, Einkommensverteilung.'},
-    {id:'p1-3',t:'Bedürfnisse identifiziert: Welche ungelösten Probleme und Wünsche treiben eure Kunden an?',tip:'Nicht was sie sagen, sondern was sie tun. Welche Workarounds nutzen sie? Was zahlen sie dafür?'},
-    {id:'p1-4',t:'Wettbewerb kartiert: Wer löst das Problem heute – und wer könnte es morgen tun?',tip:'Direkte, indirekte und potenzielle Wettbewerber. Wer hat Kapital, Markt und Motivation, euer Problem auch zu lösen?'},
+    {id:'p1-2',t:'Demografie analysiert: Wer sind die Menschen im Zielmarkt – und wie verändern sie sich?',tip:'Altert eure Zielgruppe? Wächst sie? Verändert sich ihr Kaufverhalten? Urbanisierung, Bildungsniveau, Einkommensverteilung.'},
+    {id:'p1-3',t:'Bedürfnisse identifiziert: Welche ungelösten Probleme und Wünsche treiben die Kunden an?',tip:'Nicht was sie sagen, sondern was sie tun. Welche Workarounds nutzen sie? Was zahlen sie dafür?'},
+    {id:'p1-4',t:'Wettbewerb kartiert: Wer löst das Problem heute – und wer könnte es morgen tun?',tip:'Direkte, indirekte und potenzielle Wettbewerber. Wer hat Kapital, Markt und Motivation, dasselbe Problem zu lösen?'},
     {id:'p1-5',t:'Technologie bewertet: Welche neuen Möglichkeiten entstehen durch technischen Fortschritt?',tip:'Was wird durch KI, neue Hardware oder Plattformverschiebungen plötzlich möglich – oder obsolet?'},
     {id:'p1-6',t:'Wirtschaft analysiert: Welche ökonomischen Trends beeinflussen Kaufkraft, Kosten und Marktattraktivität?',tip:'Inflation, Zinsniveau, Lohnentwicklung, B2B-Budgets, Konsumstimmung.'},
     {id:'p1-7',t:'Regulierung geprüft: Welche Gesetze, Normen und Regeln bestimmen den Spielraum eures Ventures?',tip:'DSGVO, EU AI Act, Medizinprodukterecht, Alkohollizenz, Baurecht – je nach Produkt. Regulierung ist keine Fußnote.'},
@@ -456,44 +456,44 @@ const PHASES = [
     {id:'p2-1',t:'Business Model Definition verinnerlicht: Ein Geschäftsmodell beschreibt die Logik, wie eine Organisation Wert schafft, liefert und erfasst (Osterwalder & Pigneur)',tip:'Die drei Verben sind entscheidend: schaffen (Value Prop), liefern (Channels & Relations), erfassen (Revenue).'},
     {id:'p2-2',t:'Kernfrage WER: Zielkunden und primäre Segmente definiert – nicht "alle", sondern konkret benennbar',tip:'Je präziser das Segment, desto stärker das Modell. "Alle" ist keine Zielgruppe.'},
     {id:'p2-3',t:'Kernfrage WAS: Konkretes Nutzenversprechen formuliert – welches Problem wird wie gelöst?',tip:'Was ist das eine Ding, das der Kunde mit eurem Angebot bekommt, das er ohne euch nicht hat?'},
-    {id:'p2-4',t:'Kernfrage WIE: Kritische Prozesse, Partner und Ressourcen der Wertschöpfung beschrieben',tip:'Was müsst ihr selbst können? Was kauft ihr ein? Was wäre existenzbedrohend, wenn es wegfällt?'},
+    {id:'p2-4',t:'Kernfrage WIE: Kritische Prozesse, Partner und Ressourcen der Wertschöpfung beschrieben',tip:'Was muss das Team selbst können? Was wird eingekauft? Was wäre existenzbedrohend, wenn es wegfällt?'},
     {id:'p2-5',t:'Kernfrage WIEVIEL: Erlöslogik definiert und finanzielle Nachhaltigkeit begründet',tip:'Wie oft zahlt jemand? Wieviel? Welche Kosten entstehen dabei? Ist die Einheit wirtschaftlich sinnvoll?'},
     {id:'p2-6',t:'Business Model Canvas vollständig ausgefüllt – alle 9 Felder mit konkreten, nicht generischen Inhalten',tip:'Generisch klingende BMC-Felder wie "Social Media Marketing" oder "gutes Produkt" sind wertlos. Spezifisch!'},
     {id:'p2-7',t:'AI als Kritiker eingesetzt: Geschäftsmodell auf logische Widersprüche, Skalierbarkeit und langfristige Profitabilität geprüft',tip:'Prompt: "Analysiere dieses Geschäftsmodell auf logische Widersprüche, Skalierbarkeit und langfristige Profitabilität." Nicht als Bestätigung nutzen.'},
-    {id:'p2-8',t:'Qualitätskriterium bestanden: Nicht überzeugend klingen – sondern logisch zusammenpassen',tip:'Ein BMC ist konsistent, wenn man keine Fragen mehr hat. Wenn jemand nach dem Lesen noch fragt "Aber wie verdient ihr eigentlich Geld?" – dann ist es nicht fertig.'},
+    {id:'p2-8',t:'Qualitätskriterium bestanden: Nicht überzeugend klingen – sondern logisch zusammenpassen',tip:'Ein BMC ist konsistent, wenn man keine Fragen mehr hat. Wenn jemand nach dem Lesen noch fragt "Aber wie verdient das Team eigentlich Geld?" – dann ist es nicht fertig.'},
   ]},
   {id:'p3',icon:'⚙️',num:'03',hex:'#34D399',title:'Workshop III · Prozessdesign',sub:'Aus der Idee wird ein realer, steuerbarer Ablauf · 30 Min.',items:[
     {id:'p3-1',t:'Perspektivwechsel vollzogen: Unternehmen sind Systeme von Aktivitäten – nicht Ideen, sondern Abläufe',tip:'Porter (1985): Wettbewerbsvorteile entstehen nicht durch einzelne Entscheidungen, sondern durch das Zusammenspiel aller Aktivitäten.'},
     {id:'p3-2',t:'Porters Wertschöpfungskette verstanden: Input → Transformation → Output mit Marge als Ergebnis',tip:'Ressourcen → Prozess → Ergebnis. Jede Stufe kostet und schafft Wert. Wo in eurer Kette entsteht die eigentliche Differenzierung?'},
-    {id:'p3-3',t:'Schritt 1 definiert: Kunde & Problem – wer kommt mit welchem konkreten Bedürfnis an euer Venture?',tip:'Nicht die abstrakte Zielgruppe, sondern die konkrete Situation: "Eine Studentin um 23 Uhr, Lärm im WG-Zimmer..."'},
-    {id:'p3-4',t:'Schritt 2 definiert: Transformation – wie entsteht aus dem Input (Kundenproblem + Ressourcen) die Lösung?',tip:'Das ist der Kernprozess eures Unternehmens. Was tut ihr eigentlich? Wer tut es? Wie lang dauert es?'},
+    {id:'p3-3',t:'Schritt 1 definiert: Kunde & Problem – wer kommt mit welchem konkreten Bedürfnis?',tip:'Nicht die abstrakte Zielgruppe, sondern die konkrete Situation: "Eine Studentin um 23 Uhr, Lärm im WG-Zimmer..."'},
+    {id:'p3-4',t:'Schritt 2 definiert: Transformation – wie entsteht aus dem Input (Kundenproblem + Ressourcen) die Lösung?',tip:'Das ist der Kernprozess des Unternehmens. Was passiert konkret? Wer tut es? Wie lang dauert es?'},
     {id:'p3-5',t:'Schritt 3 definiert: Angebot – wie wird die Lösung geliefert, erlebt und vom Kunden angenommen?',tip:'Delivery, Onboarding, Nutzungserlebnis. Wo kann es scheitern? Was muss reibungslos funktionieren?'},
     {id:'p3-6',t:'Schritt 4 definiert: Umsatz – wie und wann fließt Geld, und wie ist das in Odoo abgebildet?',tip:'Welches Triggerereignis löst die Zahlung aus? Rechnung nach Lieferung? Abo monatlich? Prepaid?'},
   ]},
   {id:'p4',icon:'⚖️',num:'04',hex:'#F472B6',title:'Workshop IV · Ethical Stress Test',sub:'Verantwortung als Kern-Feature · 30 Min.',items:[
     {id:'p4-1',t:'Ethik als Design-Frage verstanden: Nicht alles was technisch machbar ist, ist auch gesellschaftlich wünschenswert',tip:'Und nicht alles was funktioniert, ist auch verantwortbar. Das ist keine moralische Belehrung, sondern ein strategisches Risiko-Assessment.'},
     {id:'p4-2',t:'AI4People Framework angewendet (Floridi et al., 2018): 5 Dimensionen ethischer Prüfung',tip:'Wohltun, Nichtschaden, Autonomie, Gerechtigkeit, Erklärbarkeit. Jede Dimension ist eine potenzielle Angriffsfläche für Regulierung, Reputationsschäden oder Kundenverlust.'},
-    {id:'p4-3',t:'Wohltun geprüft: Fördert das Venture aktiv menschliches Wohlergehen – oder nur eigenen Umsatz?',tip:'Was wäre die Welt ohne euer Produkt? Und was wäre sie mit einem missbräuchlich genutzten Produkt?'},
-    {id:'p4-4',t:'Nichtschaden geprüft: Werden Risiken und negative Folgen für Nutzer, Dritte und Gesellschaft minimiert?',tip:'Wer könnte durch euer Produkt zu Schaden kommen – auch wenn ihr das nicht beabsichtigt?'},
-    {id:'p4-5',t:'Autonomie geprüft: Behalten Menschen die Wahlfreiheit und Kontrolle über ihre eigenen Entscheidungen?',tip:'Erzeugt euer Produkt Abhängigkeit? Lock-in? Informationsasymmetrie zugunsten eures Unternehmens?'},
-    {id:'p4-6',t:'Gerechtigkeit geprüft: Ist der Zugang zum Produkt fair und frei von Diskriminierung?',tip:'Wer kann euer Produkt nicht nutzen? Wer wird durch euer Produkt systematisch benachteiligt?'},
+    {id:'p4-3',t:'Wohltun geprüft: Fördert das Venture aktiv menschliches Wohlergehen – oder nur eigenen Umsatz?',tip:'Was wäre die Welt ohne das Produkt? Und was wäre sie mit einem missbräuchlich genutzten Produkt?'},
+    {id:'p4-4',t:'Nichtschaden geprüft: Werden Risiken und negative Folgen für Nutzer, Dritte und Gesellschaft minimiert?',tip:'Wer könnte durch das Produkt zu Schaden kommen – auch wenn das nicht beabsichtigt ist?'},
+    {id:'p4-5',t:'Autonomie geprüft: Behalten Menschen die Wahlfreiheit und Kontrolle über ihre eigenen Entscheidungen?',tip:'Erzeugt das Produkt Abhängigkeit? Lock-in? Informationsasymmetrie zugunsten eures Unternehmens?'},
+    {id:'p4-6',t:'Gerechtigkeit geprüft: Ist der Zugang zum Produkt fair und frei von Diskriminierung?',tip:'Wer kann das Produkt nicht nutzen? Wer wird durch das Produkt systematisch benachteiligt?'},
     {id:'p4-7',t:'Erklärbarkeit geprüft: Ist die Funktionsweise des Produkts transparent und für Nutzer nachvollziehbar?',tip:'Besonders relevant bei KI-gestützten Produkten: Was entscheidet der Algorithmus – und warum?'},
     {id:'p4-8',t:'Gegenmassnahmen geplant: Für identifizierte Risiken konkrete Schritte zur Minimierung benannt',tip:'Ein Risiko ohne Gegenmassnahme ist keine Analyse – das ist ein Problem ohne Plan.'},
   ]},
-  {id:'p5',icon:'💰',num:'05',hex:'#34D399',title:'Workshop V · Ökonomische Logik',sub:'Wie lange könnt ihr überleben, bis euer Modell funktioniert · 30 Min.',items:[
-    {id:'p5-1',t:'Burn Rate definiert: Monatlicher Netto-Verlust, um das System am Laufen zu halten und Erkenntnisse zu gewinnen',tip:'Was kostet ein Monat eures Ventures? Alle fixen Kosten + variable Kosten bei Minimalumsatz.'},
-    {id:'p5-2',t:'Runway berechnet: Wie viele Monate habt ihr mit vorhandenem oder geplanten Kapital bis Break-Even?',tip:'Runway = Verfügbares Kapital ÷ monatliche Burn Rate. Wenn ihr die Zahl nicht kennt, könnt ihr nicht steuern.'},
+  {id:'p5',icon:'💰',num:'05',hex:'#34D399',title:'Workshop V · Ökonomische Logik',sub:'Wie lange reicht das Kapital, bis das Modell trägt · 30 Min.',items:[
+    {id:'p5-1',t:'Burn Rate definiert: Monatlicher Netto-Verlust, um das System am Laufen zu halten und Erkenntnisse zu gewinnen',tip:'Was kostet ein Monat des Ventures? Alle fixen Kosten + variable Kosten bei Minimalumsatz.'},
+    {id:'p5-2',t:'Runway berechnet: Wie viele Monate sind es mit vorhandenem oder geplantem Kapital bis Break-Even?',tip:'Runway = Verfügbares Kapital ÷ monatliche Burn Rate. Wer die Zahl nicht kennt, kann nicht steuern.'},
     {id:'p5-3',t:'Einnahmen definiert: Erste, konkrete Umsatzquelle benannt – wer zahlt als erster, wann, wieviel?',tip:'Nicht "wir werden monatlich Abo-Einnahmen haben" – sondern: Wer ist Kunde Nummer 1 und wann unterschreibt er?'},
-    {id:'p5-4',t:'Kostenstruktur geklärt: Größte Kostentreiber identifiziert und nach Fix- und Variabkosten unterschieden',tip:'Fix = zahlt ihr auch ohne Umsatz. Variabel = skaliert mit Umsatz. Je mehr Variabkosten, desto sicherer in der Frühphase.'},
-    {id:'p5-5',t:'Wachstumspfad skizziert: Wie skaliert das Modell und wann sinkt die Abhängigkeit von externem Kapital?',tip:'Was muss passieren, damit ihr weniger Geld verbraucht als ihr einnehmt? In Monaten, nicht in Jahren.'},
-    {id:'p5-6',t:'Finanzierungsform gewählt und begründet: Bootstrapping, Venture Capital oder Revenue-based Financing?',tip:'Bootstrapping = Kontrolle. VC = Tempo. Revenue-based = Flexibilität. Was passt zu eurem Modell und Timing?'},
+    {id:'p5-4',t:'Kostenstruktur geklärt: Größte Kostentreiber identifiziert und nach fixen und variablen Kosten unterschieden',tip:'Fix = läuft auch ohne Umsatz. Variabel = skaliert mit Umsatz. Je mehr variable Kosten, desto sicherer in der Frühphase.'},
+    {id:'p5-5',t:'Wachstumspfad skizziert: Wie skaliert das Modell und wann sinkt die Abhängigkeit von externem Kapital?',tip:'Was muss passieren, damit weniger Geld verbraucht als eingenommen wird? In Monaten, nicht in Jahren.'},
+    {id:'p5-6',t:'Finanzierungsform gewählt und begründet: Bootstrapping, Venture Capital oder Revenue-based Financing?',tip:'Bootstrapping = Kontrolle. VC = Tempo. Revenue-based = Flexibilität. Was passt zum Modell und Timing?'},
     {id:'p5-7',t:'Break-Even oder Runway-Ziel konkret benannt: Bis wann muss das Modell tragen?',tip:'Ein Datum ohne Plan ist ein Wunsch. Ein Plan ohne Datum ist eine Absicht. Ihr braucht beides.'},
   ]},
   {id:'p6',icon:'🚀',num:'06',hex:'#818CF8',title:'Pitch Synthese',sub:'Integrierter Pitch: Produkt · Modell · Prozess · Finanzen',items:[
-    {id:'p6-1',t:'Produkt klar: Die Lösung für ein echtes Problem (aus Session 2) präzise formuliert',tip:'Nicht länger als 2 Sätze. Wenn ihr mehr braucht, ist es nicht klar genug.'},
+    {id:'p6-1',t:'Produkt klar: Die Lösung für ein echtes Problem (aus Session 2) präzise formuliert',tip:'Nicht länger als 2 Sätze. Wer mehr braucht, hat es noch nicht klar genug.'},
     {id:'p6-2',t:'Modell klar: Die Logik der Wertschöpfung aus dem Business Model Canvas in einem Satz',tip:'Wer zahlt, warum, wofür, wie oft?'},
-    {id:'p6-3',t:'Prozess klar: Der reale Ablauf von Kundenproblem zu Umsatz in vier Schritten beschreibbar',tip:'Wenn ihr den Prozess nicht beschreiben könnt, könnt ihr ihn auch nicht an jemanden delegieren.'},
-    {id:'p6-4',t:'Finanzen klar: Burn Rate, Runway und Wachstumspfad in Zahlen, nicht in Worten',tip:'Drei Zahlen reichen: Was kostet ein Monat? Wie lange habt ihr? Ab wann trägt es sich?'},
+    {id:'p6-3',t:'Prozess klar: Der reale Ablauf von Kundenproblem zu Umsatz in vier Schritten beschreibbar',tip:'Wer den Prozess nicht beschreiben kann, kann ihn auch nicht delegieren.'},
+    {id:'p6-4',t:'Finanzen klar: Burn Rate, Runway und Wachstumspfad in Zahlen, nicht in Worten',tip:'Drei Zahlen reichen: Was kostet ein Monat? Wie lange reicht das Kapital? Ab wann trägt es sich?'},
     {id:'p6-5',t:'Integrierten Pitch auf 90 Sekunden verdichtet, alle vier Dimensionen enthalten, im Team geprobt',tip:'Ein Pitch der funktioniert, muss nicht gut klingen. Er muss klar sein.'},
   ]},
 ];
@@ -501,17 +501,17 @@ const PHASES = [
 const CANVASES = {
   p1: {
     id:'ctx', icon:'🌍', title:'Context Canvas',
-    desc:'Analysiert euer externes Umfeld. Welche Kräfte von außen bestimmen euren Spielraum? (Design a Better Business · Van Der Pijl et al.)',
+    desc:'Externes Umfeld analysieren: Welche Kräfte von außen bestimmen den Spielraum des Ventures? (Design a Better Business · Van Der Pijl et al.)',
     type:'context',
     fields:[
-      {id:'ctx_demo',label:'DEMOGRAFIE',hint:'Wer sind die Menschen in eurem Markt und wie verändern sie sich?'},
-      {id:'ctx_needs',label:'BEDÜRFNISSE',hint:'Welche ungelösten Probleme und Wünsche treiben eure Kunden an?'},
+      {id:'ctx_demo',label:'DEMOGRAFIE',hint:'Wer sind die Menschen im Zielmarkt und wie verändern sie sich?'},
+      {id:'ctx_needs',label:'BEDÜRFNISSE',hint:'Welche ungelösten Probleme und Wünsche treiben die Kunden an?'},
       {id:'ctx_comp',label:'WETTBEWERB',hint:'Wer löst das Problem heute – und wer könnte es morgen tun?'},
       {id:'ctx_tech',label:'TECHNOLOGIE',hint:'Welche neuen Möglichkeiten entstehen durch technischen Fortschritt?'},
       {id:'ctx_econ',label:'WIRTSCHAFT',hint:'Welche ökonomischen Trends beeinflussen Kaufkraft und Kosten?'},
       {id:'ctx_reg',label:'REGULIERUNG',hint:'Welche Gesetze und Regeln bestimmen euren Spielraum?'},
       {id:'ctx_trends',label:'TRENDS',hint:'Was treibt den Markt? Welche Megatrends sind relevant?'},
-      {id:'ctx_uncert',label:'UNSICHERHEITEN',hint:'Was wisst ihr noch nicht – und was könnte eure Annahmen kippen?'},
+      {id:'ctx_uncert',label:'UNSICHERHEITEN',hint:'Was ist noch unbekannt – und was könnte die Annahmen kippen?'},
     ]
   },
   p2: {
@@ -519,31 +519,31 @@ const CANVASES = {
     desc:'Entwickelt ein konsistentes Geschäftsmodell. Fokus: Value Proposition, Revenue Model & Cost Structure. (Osterwalder & Pigneur, 2010)',
     type:'bmc',
     fields:[
-      {id:'bmc_kp',label:'KEY PARTNERS',hint:'Wer sind eure wichtigsten Partner und Lieferanten?'},
-      {id:'bmc_ka',label:'KEY ACTIVITIES',hint:'Welche Aktivitäten sind entscheidend für euren Wert?'},
+      {id:'bmc_kp',label:'KEY PARTNERS',hint:'Wer sind die wichtigsten Partner und Lieferanten?'},
+      {id:'bmc_ka',label:'KEY ACTIVITIES',hint:'Welche Aktivitäten sind entscheidend für den Wert?'},
       {id:'bmc_kr',label:'KEY RESOURCES',hint:'Welche Ressourcen sind unverzichtbar?'},
-      {id:'bmc_vp',label:'VALUE PROPOSITIONS',hint:'Welchen konkreten Wert schafft ihr für welches Segment?'},
-      {id:'bmc_cr',label:'CUSTOMER RELATIONSHIPS',hint:'Wie gewinnt, haltet und entwickelt ihr Kunden?'},
-      {id:'bmc_ch',label:'CHANNELS',hint:'Wie erreicht und bedient ihr eure Kunden?'},
-      {id:'bmc_cs',label:'CUSTOMER SEGMENTS',hint:'Für wen schafft ihr Wert? Wer sind eure wichtigsten Kunden?'},
-      {id:'bmc_cost',label:'COST STRUCTURE',hint:'Was sind eure grössten Kostentreiber? Fix und variabel?'},
-      {id:'bmc_rev',label:'REVENUE STREAMS',hint:'Wie und wofür zahlen eure Kunden? Welche Preislogik?'},
+      {id:'bmc_vp',label:'VALUE PROPOSITIONS',hint:'Welchen konkreten Wert schafft das Venture für welches Segment?'},
+      {id:'bmc_cr',label:'CUSTOMER RELATIONSHIPS',hint:'Wie werden Kunden gewonnen, gehalten und entwickelt?'},
+      {id:'bmc_ch',label:'CHANNELS',hint:'Wie werden Kunden erreicht und bedient?'},
+      {id:'bmc_cs',label:'CUSTOMER SEGMENTS',hint:'Für wen entsteht Wert? Wer sind die wichtigsten Kundensegmente?'},
+      {id:'bmc_cost',label:'COST STRUCTURE',hint:'Was sind die grössten Kostentreiber? Fix und variabel?'},
+      {id:'bmc_rev',label:'REVENUE STREAMS',hint:'Wie und wofür zahlen die Kunden? Welche Preislogik?'},
     ]
   },
   p3: {
     id:'proc', icon:'⚙️', title:'Prozessdesign',
-    desc:'Beschreibt euren realen Ablauf. Wie wird aus einem Kundenbedürfnis ein fertiges Angebot und schließlich Umsatz? (Porter, 1985)',
+    desc:'Beschreibung des realen Ablaufs: Wie wird aus einem Kundenbedürfnis ein fertiges Angebot und schließlich Umsatz? (Porter, 1985)',
     type:'process',
     fields:[
       {id:'proc_1',label:'01 · KUNDE & PROBLEM',hint:'Wer kommt mit welchem konkreten Bedürfnis?'},
-      {id:'proc_2',label:'02 · TRANSFORMATION',hint:'Was tut ihr? Wie entsteht die Lösung aus dem Input?'},
+      {id:'proc_2',label:'02 · TRANSFORMATION',hint:'Was passiert? Wie entsteht die Lösung aus dem Input?'},
       {id:'proc_3',label:'03 · ANGEBOT',hint:'Wie wird die Lösung geliefert und erlebt?'},
       {id:'proc_4',label:'04 · UMSATZ',hint:'Wann und wie fließt Geld? Odoo-Prozess?'},
     ]
   },
   p4: {
     id:'eth', icon:'⚖️', title:'Ethical Stress Test',
-    desc:'Unterzieht euer Venture einer kritischen ethischen Prüfung. (AI4People Framework · Floridi et al., 2018)',
+    desc:'Das Venture einer kritischen ethischen Prüfung unterziehen. (AI4People Framework · Floridi et al., 2018)',
     type:'ethics',
     fields:[
       {id:'eth_1',label:'01 WOHLTUN',hint:'Fördert die Lösung aktiv das menschliche Wohlergehen?'},
@@ -551,19 +551,19 @@ const CANVASES = {
       {id:'eth_3',label:'03 AUTONOMIE',hint:'Behalten Menschen Wahlfreiheit und Kontrolle?'},
       {id:'eth_4',label:'04 GERECHTIGKEIT',hint:'Ist der Zugang fair und diskriminierungsfrei?'},
       {id:'eth_5',label:'05 ERKLÄRBARKEIT',hint:'Ist die Funktionsweise transparent und nachvollziehbar?'},
-      {id:'eth_risks',label:'IDENTIFIZIERTE RISIKEN',hint:'Welche ethischen Reibungspunkte und Risiken habt ihr gefunden?'},
-      {id:'eth_counter',label:'GEGENMASSNAHMEN',hint:'Welche konkreten Schritte plant ihr zur Risikominimierung?'},
+      {id:'eth_risks',label:'IDENTIFIZIERTE RISIKEN',hint:'Welche ethischen Reibungspunkte und Risiken wurden identifiziert?'},
+      {id:'eth_counter',label:'GEGENMASSNAHMEN',hint:'Welche konkreten Schritte sind zur Risikominimierung geplant?'},
     ]
   },
   p5: {
     id:'fin', icon:'💰', title:'Ökonomische Logik',
-    desc:'Definiert eure Einnahmen, Kostenstruktur und Wachstumspfad. Die Kernfrage: Wie lange könnt ihr überleben, bis euer Modell funktioniert?',
+    desc:'Einnahmen, Kostenstruktur und Wachstumspfad definieren. Die Kernfrage: Wie lange ist das Überleben gesichert, bis das Modell trägt?',
     type:'finance',
     fields:[
       {id:'fin_rev',label:'EINNAHMEN',hint:'Woher kommt das erste Geld? Wer zahlt was und wann?'},
       {id:'fin_cost',label:'KOSTENSTRUKTUR',hint:'Grösste Kostentreiber, fix vs. variabel'},
       {id:'fin_burn',label:'BURN RATE (EUR/Monat)',hint:'Monatlicher Netto-Verlust in der Frühphase'},
-      {id:'fin_runway',label:'RUNWAY (Monate)',hint:'Wie lange habt ihr mit verfügbarem Kapital?'},
+      {id:'fin_runway',label:'RUNWAY (Monate)',hint:'Wie lange reicht das verfügbare Kapital?'},
       {id:'fin_growth',label:'WACHSTUMSPFAD',hint:'Wann und wie wird das Modell profitabel?'},
       {id:'fin_financing',label:'FINANZIERUNGSFORM',hint:'Bootstrapping / Venture Capital / Revenue-based – und warum?'},
     ]
@@ -638,7 +638,7 @@ function renderHdr(){
           <div class="xp-meta"><span>XP</span><span id="xp-lbl">${x} / ${mx}</span></div>
           <div class="xp-track"><div class="xp-fill" style="width:${p}%"></div></div>
         </div>
-        <div class="lvl-badge">${lv.icon} ${lv.label}</div>
+        <div style="display:flex;flex-direction:column;align-items:center;gap:1px"><div style="font-size:7.5px;text-transform:uppercase;letter-spacing:.1em;color:var(--dim);font-family:'Syne',sans-serif;font-weight:600">Level</div><div class="lvl-badge">${lv.icon} ${lv.label}</div></div>
       </div>
       ${S.feedback?`<button class="hdr-btn" id="hdr-fb-scroll" style="border-color:var(--green);color:var(--green)">📬 Feedback</button>`:''}
       <button class="hdr-btn amber" id="hdr-submit">⬇ Zusammenfassung</button>
@@ -893,7 +893,7 @@ function renderSubmitSection(){
   const fb=S.feedback;
   return `<div class="submit-area" id="submit-section">
     <div class="submit-title">📋 Zusammenfassung herunterladen</div>
-    <div class="submit-sub">Ladet eure vollständige Bearbeitung herunter und schickt sie dem Dozenten. Das Dokument enthält alle ausgefüllten Canvases und euren Fortschritt.</div>
+    <div class="submit-sub">Die vollständige Bearbeitung als JSON herunterladen und an den Dozenten senden. Das Dokument enthält alle ausgefüllten Canvases und den Fortschritt.</div>
     <div class="submit-grid">
       <div class="sg-item"><div class="sg-v" style="color:var(--gold)">${dca}<em> / ${tca}</em></div><div class="sg-l">Canvas-Felder ausgefüllt</div></div>
       <div class="sg-item"><div class="sg-v" style="color:var(--teal)">${dc}<em> / ${tc}</em></div><div class="sg-l">Checklisten-Punkte</div></div>
