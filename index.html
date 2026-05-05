@@ -1,0 +1,1250 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ECL · Session 4 · From Product to Business</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet">
+<style>
+/* ── RESET & TOKENS ─────────────────────────────────────── */
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#04080F;--surface:#080F1C;--card:#0C1627;--card-hi:#111E35;
+  --border:rgba(255,255,255,0.07);--border-md:rgba(255,255,255,0.12);
+  --text:#D4E2F4;--dim:#5A7595;--muted:#1E2E44;
+  --teal:#0DD6D6;--gold:#F5A623;--rose:#F472B6;--green:#34D399;--violet:#818CF8;--red:#F87171;
+  --r:14px;--r-sm:9px;--r-xs:6px;
+}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;
+  font-size:14.5px;line-height:1.65;min-height:100vh;overflow-x:hidden}
+body::before{content:'';position:fixed;inset:0;
+  background-image:linear-gradient(rgba(13,214,214,.02) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(13,214,214,.02) 1px,transparent 1px);
+  background-size:60px 60px;pointer-events:none;z-index:0}
+#app-team,#app-prof{position:relative;z-index:1}
+
+/* ── HEADER ─────────────────────────────────────────────── */
+.header{position:sticky;top:0;z-index:100;
+  background:rgba(4,8,15,0.92);backdrop-filter:blur(24px) saturate(1.5);
+  border-bottom:1px solid var(--border)}
+.header-row{display:flex;align-items:center;gap:10px;padding:9px 22px;flex-wrap:wrap}
+.logo{font-family:'Syne',sans-serif;font-weight:800;font-size:8.5px;
+  letter-spacing:.16em;color:var(--teal);text-transform:uppercase;white-space:nowrap;flex-shrink:0}
+.session-label{font-family:'Syne',sans-serif;font-weight:700;font-size:13px;
+  color:var(--text);flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.session-label small{color:var(--dim);font-weight:400}
+.team-wrap{display:flex;align-items:center;gap:7px;background:var(--card);
+  border:1px solid var(--border-md);border-radius:var(--r-sm);padding:5px 11px;flex-shrink:0}
+.team-wrap label{font-size:9px;text-transform:uppercase;letter-spacing:.12em;
+  color:var(--dim);font-family:'Syne',sans-serif;font-weight:600;white-space:nowrap}
+.team-wrap input{background:none;border:none;outline:none;color:var(--text);
+  font-family:'Syne',sans-serif;font-weight:700;font-size:12.5px;width:120px}
+.team-wrap input::placeholder{color:var(--muted)}
+.xp-zone{display:flex;align-items:center;gap:9px;flex-shrink:0}
+.xp-stack{display:flex;flex-direction:column;gap:3px}
+.xp-meta{display:flex;justify-content:space-between;font-size:9px;
+  text-transform:uppercase;letter-spacing:.1em;color:var(--dim);font-family:'Syne',sans-serif;gap:14px}
+.xp-track{width:130px;height:5px;background:var(--muted);border-radius:3px;overflow:hidden}
+.xp-fill{height:100%;background:linear-gradient(90deg,var(--teal),var(--violet));
+  border-radius:3px;transition:width .5s cubic-bezier(.25,.8,.25,1)}
+.lvl-badge{background:linear-gradient(135deg,var(--teal),var(--violet));
+  font-family:'Syne',sans-serif;font-weight:800;font-size:9.5px;color:#fff;
+  padding:3px 9px;border-radius:20px;white-space:nowrap}
+.hdr-btn{background:none;border:1px solid var(--muted);color:var(--dim);
+  padding:4px 10px;border-radius:var(--r-xs);cursor:pointer;font-size:9.5px;
+  font-family:'Syne',sans-serif;font-weight:600;letter-spacing:.05em;
+  text-transform:uppercase;transition:all .18s;flex-shrink:0;white-space:nowrap}
+.hdr-btn:hover{border-color:var(--dim);color:var(--text)}
+.hdr-btn.amber{border-color:var(--gold);color:var(--gold)}
+.hdr-btn.amber:hover{background:rgba(245,166,35,.1)}
+
+/* Phase nav */
+.phase-nav{display:flex;gap:5px;padding:7px 22px;overflow-x:auto;scrollbar-width:none}
+.phase-nav::-webkit-scrollbar{display:none}
+.p-pill{display:flex;align-items:center;gap:5px;padding:4px 11px;border-radius:20px;
+  background:var(--card);border:1px solid var(--border);cursor:pointer;transition:all .18s;
+  text-decoration:none;font-size:11px;color:var(--dim);
+  font-family:'Syne',sans-serif;font-weight:600;white-space:nowrap}
+.p-pill:hover{background:var(--card-hi);color:var(--text)}
+.p-pill.active{border-color:var(--pc);color:var(--pc);background:color-mix(in srgb,var(--pc) 10%,transparent)}
+.p-pill.done{border-color:var(--pc);color:var(--pc);background:color-mix(in srgb,var(--pc) 14%,transparent)}
+.p-pill .dot{width:5px;height:5px;border-radius:50%;background:currentColor}
+
+/* ── MAIN ────────────────────────────────────────────────── */
+.wrap{max-width:900px;margin:0 auto;padding:26px 18px 48px;
+  display:flex;flex-direction:column;gap:18px}
+
+/* Stats */
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:11px}
+.stat{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:14px 16px}
+.stat-v{font-family:'Syne',sans-serif;font-weight:800;font-size:22px;line-height:1}
+.stat-v em{font-style:normal;font-size:12px;color:var(--dim);font-weight:400}
+.stat-l{font-size:10px;text-transform:uppercase;letter-spacing:.1em;
+  color:var(--dim);font-family:'Syne',sans-serif;font-weight:600;margin-top:4px}
+
+/* ── PHASE CARDS ─────────────────────────────────────────── */
+.pc{background:var(--card);border:1px solid var(--border);border-radius:var(--r);
+  overflow:hidden;transition:border-color .35s;scroll-margin-top:120px}
+.pc.complete{border-color:color-mix(in srgb,var(--pc) 30%,transparent)}
+.pc.in-progress{border-left:2px solid color-mix(in srgb,var(--pc) 45%,transparent)}
+.ph{display:flex;align-items:center;gap:13px;padding:16px 20px;cursor:pointer;
+  transition:background .18s;position:relative;overflow:hidden;user-select:none}
+.ph:hover{background:rgba(255,255,255,.02)}
+.ph::before{content:attr(data-num);position:absolute;right:68px;
+  font-family:'Syne',sans-serif;font-weight:800;font-size:70px;
+  color:rgba(255,255,255,.025);line-height:1;pointer-events:none;
+  top:50%;transform:translateY(-50%)}
+.ph-icon{width:42px;height:42px;border-radius:10px;flex-shrink:0;
+  background:color-mix(in srgb,var(--pc) 13%,transparent);
+  border:1px solid color-mix(in srgb,var(--pc) 26%,transparent);
+  display:flex;align-items:center;justify-content:center;font-size:20px}
+.ph-meta{flex:1;min-width:0}
+.ph-label{font-size:9px;text-transform:uppercase;letter-spacing:.13em;
+  color:var(--pc);font-family:'Syne',sans-serif;font-weight:600;margin-bottom:1px}
+.ph-title{font-family:'Syne',sans-serif;font-weight:700;font-size:15px;color:var(--text);line-height:1.25}
+.ph-sub{font-size:11.5px;color:var(--dim);margin-top:2px}
+.ring-wrap{position:relative;width:46px;height:46px;flex-shrink:0}
+.ring-wrap svg{width:46px;height:46px}
+.ring-pct{position:absolute;inset:0;display:flex;align-items:center;
+  justify-content:center;font-family:'Syne',sans-serif;font-weight:700;font-size:10px;color:var(--text)}
+.chevron{color:var(--muted);font-size:15px;flex-shrink:0;transition:transform .28s}
+.pc.collapsed .chevron{transform:rotate(-90deg)}
+.done-badge{display:none;align-items:center;gap:7px;margin:0 20px 10px;
+  padding:6px 12px;background:color-mix(in srgb,var(--pc) 8%,transparent);
+  border:1px solid color-mix(in srgb,var(--pc) 25%,transparent);border-radius:var(--r-xs);
+  font-family:'Syne',sans-serif;font-weight:700;font-size:11px;color:var(--pc);letter-spacing:.04em}
+.done-badge.show{display:flex}
+.ph-div{height:1px;background:var(--border);margin:0 20px 13px}
+.pb{padding:0 20px 18px;display:flex;flex-direction:column;gap:1px}
+.pc.collapsed .pb,.pc.collapsed .done-badge,.pc.collapsed .ph-div{display:none!important}
+
+/* Checklist items */
+.ci{padding:8px 9px;border-radius:var(--r-sm);transition:background .14s;cursor:pointer}
+.ci:hover{background:rgba(255,255,255,.03)}
+.ci-row{display:flex;align-items:flex-start;gap:10px}
+.cb{width:19px;height:19px;border-radius:5px;flex-shrink:0;border:2px solid var(--muted);
+  background:transparent;margin-top:2px;position:relative;transition:all .2s;cursor:pointer}
+.cb.on{border-color:var(--pc);background:var(--pc)}
+.cb.on::after{content:'';position:absolute;left:3px;top:.5px;width:7.5px;height:10.5px;
+  border:2.5px solid white;border-top:none;border-left:none;transform:rotate(40deg)}
+@keyframes cbPop{0%,100%{transform:scale(1)}40%{transform:scale(1.3)}70%{transform:scale(.92)}}
+.cb.pop{animation:cbPop .28s ease}
+.ci-txt{font-size:13.5px;color:var(--text);transition:all .25s;line-height:1.55;flex:1}
+.ci.done .ci-txt{color:var(--dim);background:color-mix(in srgb,var(--pc) 8%,transparent);
+  border-radius:4px;padding:1px 5px;margin-left:-5px}
+.tip-btn{background:none;border:none;cursor:pointer;color:var(--muted);font-size:11.5px;
+  padding:2px 4px;border-radius:4px;transition:all .18s;flex-shrink:0;margin-top:2px}
+.tip-btn:hover{color:var(--teal);background:rgba(13,214,214,.1)}
+.tip-box{display:none;margin:5px 0 2px 29px;font-size:12px;color:var(--dim);
+  background:rgba(13,214,214,.05);border-left:2px solid var(--teal);
+  padding:6px 10px;border-radius:0 var(--r-xs) var(--r-xs) 0;font-style:italic;line-height:1.5}
+.tip-box.open{display:block}
+
+/* ── CANVAS SECTIONS ─────────────────────────────────────── */
+.canvas-section{margin:16px 0 4px;border-radius:var(--r-sm);overflow:hidden;
+  border:1px solid color-mix(in srgb,var(--pc) 22%,transparent)}
+.canvas-section.ca-complete{border-color:color-mix(in srgb,var(--green) 35%,transparent)}
+.canvas-head{display:flex;align-items:center;gap:10px;padding:11px 15px;
+  cursor:pointer;user-select:none;background:color-mix(in srgb,var(--pc) 5%,transparent)}
+.canvas-head:hover{background:color-mix(in srgb,var(--pc) 8%,transparent)}
+.canvas-badge{font-family:'Syne',sans-serif;font-weight:800;font-size:9px;
+  letter-spacing:.14em;text-transform:uppercase;padding:3px 8px;border-radius:20px;
+  background:color-mix(in srgb,var(--pc) 16%,transparent);color:var(--pc);flex-shrink:0}
+.canvas-title{font-family:'Syne',sans-serif;font-weight:700;font-size:13px;color:var(--text);flex:1}
+.canvas-prog{font-size:10px;color:var(--dim);font-family:'Syne',sans-serif;font-weight:600;flex-shrink:0}
+.canvas-chev{color:var(--muted);font-size:13px;transition:transform .25s;flex-shrink:0}
+.canvas-section.ca-collapsed .canvas-chev{transform:rotate(-90deg)}
+.canvas-body{padding:14px 15px;display:flex;flex-direction:column;gap:12px}
+.canvas-section.ca-collapsed .canvas-body{display:none}
+.canvas-desc{font-size:12px;color:var(--dim);font-style:italic;margin-bottom:4px;
+  padding-bottom:10px;border-bottom:1px solid var(--border)}
+
+/* Context Canvas Grid */
+.ctx-grid{display:grid;grid-template-columns:1fr 1fr 1fr;grid-template-rows:auto auto auto;
+  gap:6px}
+.ctx-cell{background:rgba(0,0,0,.25);border:1px solid var(--border-md);
+  border-radius:var(--r-xs);padding:10px}
+.ctx-cell.center{background:color-mix(in srgb,var(--pc) 10%,transparent);
+  border-color:color-mix(in srgb,var(--pc) 35%,transparent);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  text-align:center;min-height:100px}
+.ctx-cell-label{font-size:9px;text-transform:uppercase;letter-spacing:.12em;
+  color:var(--pc);font-family:'Syne',sans-serif;font-weight:700;margin-bottom:5px}
+.ctx-venture-name{font-family:'Syne',sans-serif;font-weight:800;font-size:16px;color:var(--text)}
+.ctx-hint{font-size:10.5px;color:var(--muted);margin-top:3px}
+
+/* Business Model Canvas */
+.bmc-grid{display:grid;
+  grid-template-columns:1fr 1fr 1fr 1fr 1fr;
+  grid-template-rows:auto auto auto;gap:5px}
+.bmc-cell{background:rgba(0,0,0,.25);border:1px solid var(--border-md);
+  border-radius:var(--r-xs);padding:9px;min-height:90px}
+.bmc-cell.span2h{grid-row:span 2}
+.bmc-cell.bottom{min-height:70px}
+.bmc-label{font-size:8.5px;text-transform:uppercase;letter-spacing:.12em;
+  color:var(--gold);font-family:'Syne',sans-serif;font-weight:700;margin-bottom:5px}
+.bmc-label.vp{color:var(--teal)}
+
+/* Process Steps */
+.proc-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;align-items:start}
+.proc-step{background:rgba(0,0,0,.22);border:1px solid var(--border-md);
+  border-radius:var(--r-sm);padding:11px;position:relative}
+.proc-step::after{content:'→';position:absolute;right:-12px;top:50%;
+  transform:translateY(-50%);color:var(--dim);font-size:14px;z-index:1}
+.proc-step:last-child::after{display:none}
+.proc-num{font-family:'Syne',sans-serif;font-weight:800;font-size:22px;
+  color:var(--pc);opacity:.3;line-height:1;margin-bottom:4px}
+.proc-title{font-size:10px;text-transform:uppercase;letter-spacing:.1em;
+  color:var(--pc);font-family:'Syne',sans-serif;font-weight:700;margin-bottom:6px}
+
+/* Ethics Grid */
+.eth-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:6px}
+.eth-cell{background:rgba(0,0,0,.22);border:1px solid var(--border-md);
+  border-radius:var(--r-xs);padding:9px}
+.eth-num{font-family:'Syne',sans-serif;font-weight:800;font-size:18px;
+  color:var(--rose);opacity:.35;line-height:1;margin-bottom:3px}
+.eth-label{font-size:8.5px;text-transform:uppercase;letter-spacing:.12em;
+  color:var(--rose);font-family:'Syne',sans-serif;font-weight:700;margin-bottom:5px}
+.eth-extra{margin-top:12px;display:grid;grid-template-columns:1fr 1fr;gap:6px}
+
+/* Finance Grid */
+.fin-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
+.fin-cell{background:rgba(0,0,0,.22);border:1px solid var(--border-md);border-radius:var(--r-sm);padding:11px}
+.fin-label{font-size:9px;text-transform:uppercase;letter-spacing:.12em;
+  color:var(--green);font-family:'Syne',sans-serif;font-weight:700;margin-bottom:5px}
+.fin-chip-row{display:flex;gap:5px;flex-wrap:wrap;margin-top:8px}
+.fin-chip{padding:4px 10px;border-radius:20px;font-size:10.5px;font-family:'Syne',sans-serif;
+  font-weight:700;cursor:pointer;transition:all .18s;border:1px solid var(--border-md);color:var(--dim)}
+.fin-chip.selected{background:color-mix(in srgb,var(--green) 15%,transparent);
+  border-color:var(--green);color:var(--green)}
+
+/* Shared textarea */
+.ca-input,.ca-textarea{width:100%;background:rgba(0,0,0,.3);
+  border:1px solid var(--border-md);border-radius:var(--r-xs);
+  color:var(--text);font-family:'DM Sans',sans-serif;font-size:13px;
+  padding:7px 10px;outline:none;transition:border-color .18s;resize:vertical}
+.ca-input:focus,.ca-textarea:focus{border-color:var(--pc)}
+.ca-textarea{min-height:60px;line-height:1.55}
+.ca-char{font-size:9.5px;color:var(--muted);text-align:right;margin-top:2px}
+.ca-char.ok{color:var(--green)}
+.ca-label{font-size:11px;font-weight:600;color:var(--text);display:block;margin-bottom:4px}
+.ca-label .req{color:var(--gold);margin-left:2px}
+.ca-hint{font-size:10.5px;color:var(--dim);margin-bottom:5px;font-style:italic}
+
+/* Submit area */
+.submit-area{background:var(--card);border:1px solid var(--border-md);
+  border-radius:var(--r);padding:22px 26px}
+.submit-title{font-family:'Syne',sans-serif;font-weight:800;font-size:17px;
+  color:var(--text);margin-bottom:5px}
+.submit-sub{font-size:13px;color:var(--dim);margin-bottom:18px;line-height:1.6}
+.submit-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:18px}
+.sg-item{background:rgba(0,0,0,.2);border:1px solid var(--border);border-radius:var(--r-sm);padding:11px 14px}
+.sg-v{font-family:'Syne',sans-serif;font-weight:800;font-size:20px;line-height:1}
+.sg-l{font-size:10px;text-transform:uppercase;letter-spacing:.09em;
+  color:var(--dim);font-family:'Syne',sans-serif;margin-top:3px}
+.btn{padding:9px 18px;border-radius:var(--r-xs);border:none;cursor:pointer;
+  font-family:'Syne',sans-serif;font-weight:700;font-size:12.5px;
+  letter-spacing:.04em;transition:all .2s;display:inline-flex;align-items:center;gap:6px}
+.btn-primary{background:linear-gradient(135deg,var(--gold),#d4820e);color:#111}
+.btn-primary:hover{opacity:.9;transform:translateY(-1px)}
+.btn-secondary{background:var(--card-hi);border:1px solid var(--border-md);color:var(--text)}
+.btn-secondary:hover{border-color:var(--dim)}
+.submit-note{font-size:11px;color:var(--muted);margin-top:12px;line-height:1.6}
+
+/* Footer */
+.foot{max-width:900px;margin:0 auto;padding:0 18px 60px}
+.foot-card{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:20px 24px}
+.foot-ttl{font-family:'Syne',sans-serif;font-weight:700;font-size:10.5px;
+  text-transform:uppercase;letter-spacing:.13em;color:var(--teal);margin-bottom:16px}
+.learn-grid{display:grid;grid-template-columns:1fr 1fr;gap:13px}
+.learn-item{display:flex;gap:11px;font-size:12.5px;color:var(--dim);line-height:1.55}
+.learn-n{font-family:'Syne',sans-serif;font-weight:800;font-size:20px;
+  color:var(--teal);opacity:.3;line-height:1;flex-shrink:0;padding-top:1px}
+.credit{margin-top:16px;padding-top:14px;border-top:1px solid var(--border);
+  font-size:10.5px;color:var(--muted);text-align:center}
+
+/* ── TOAST & CONFETTI ────────────────────────────────────── */
+#toasts{position:fixed;bottom:20px;right:18px;z-index:9999;
+  display:flex;flex-direction:column;gap:7px;pointer-events:none}
+.toast{background:rgba(8,15,28,.95);backdrop-filter:blur(16px);
+  border:1px solid var(--border-md);border-left-width:3px;
+  padding:9px 14px;border-radius:var(--r-xs);font-size:12.5px;
+  color:var(--text);max-width:280px;
+  animation:tIn .25s ease,tOut .25s ease 2.7s forwards}
+.toast.big{font-family:'Syne',sans-serif;font-weight:700;font-size:13px}
+@keyframes tIn{from{transform:translateX(14px);opacity:0}to{transform:none;opacity:1}}
+@keyframes tOut{to{transform:translateX(14px);opacity:0}}
+#cc{position:fixed;inset:0;pointer-events:none;z-index:9998}
+
+/* ── PROFESSOR MODE ──────────────────────────────────────── */
+#app-prof{display:none;min-height:100vh}
+.prof-header{background:rgba(4,8,15,.93);backdrop-filter:blur(20px);
+  border-bottom:1px solid var(--border);padding:13px 26px;
+  display:flex;align-items:center;gap:14px;position:sticky;top:0;z-index:100}
+.prof-logo{font-family:'Syne',sans-serif;font-weight:800;font-size:10.5px;
+  letter-spacing:.16em;color:var(--gold);text-transform:uppercase}
+.prof-badge{background:color-mix(in srgb,var(--gold) 14%,transparent);
+  border:1px solid color-mix(in srgb,var(--gold) 32%,transparent);
+  color:var(--gold);font-family:'Syne',sans-serif;font-weight:700;
+  font-size:9px;padding:3px 8px;border-radius:20px;letter-spacing:.1em;text-transform:uppercase}
+.prof-wrap{max-width:920px;margin:0 auto;padding:30px 22px 80px;display:flex;flex-direction:column;gap:18px}
+.prof-gate{max-width:380px;margin:80px auto;background:var(--card);
+  border:1px solid var(--border);border-radius:var(--r);padding:34px}
+.prof-gate h2{font-family:'Syne',sans-serif;font-weight:800;font-size:20px;color:var(--text);margin-bottom:5px}
+.prof-gate p{font-size:13px;color:var(--dim);margin-bottom:22px}
+.prof-gate input{width:100%;background:rgba(0,0,0,.3);border:1px solid var(--border-md);
+  border-radius:var(--r-xs);color:var(--text);font-size:14px;padding:10px 13px;
+  outline:none;transition:border-color .18s;margin-bottom:10px}
+.prof-gate input:focus{border-color:var(--gold)}
+.prof-gate-err{font-size:11.5px;color:var(--red);margin-top:5px;min-height:18px}
+.drop-zone{border:2px dashed var(--muted);border-radius:var(--r);
+  padding:44px 22px;text-align:center;cursor:pointer;transition:all .25s;
+  background:rgba(0,0,0,.12)}
+.drop-zone:hover,.drop-zone.drag-over{border-color:var(--gold);background:rgba(245,166,35,.04)}
+.drop-zone-icon{font-size:38px;margin-bottom:10px}
+.drop-zone-title{font-family:'Syne',sans-serif;font-weight:700;font-size:16px;color:var(--text);margin-bottom:5px}
+.drop-zone-sub{font-size:12.5px;color:var(--dim)}
+.prof-toolbar{display:flex;justify-content:space-between;align-items:center;
+  flex-wrap:wrap;gap:11px;background:var(--card);border:1px solid var(--border);
+  border-radius:var(--r);padding:13px 16px}
+.prof-name-label{font-size:9.5px;text-transform:uppercase;letter-spacing:.1em;
+  color:var(--dim);font-family:'Syne',sans-serif;font-weight:600}
+.prof-name-input{background:rgba(0,0,0,.3);border:1px solid var(--border-md);
+  border-radius:var(--r-xs);color:var(--text);font-family:'DM Sans',sans-serif;
+  font-size:13.5px;padding:7px 12px;outline:none;transition:border-color .18s;
+  width:200px;margin-left:8px}
+.prof-name-input:focus{border-color:var(--gold)}
+.team-tabs{display:flex;gap:5px;flex-wrap:wrap}
+.team-tab{display:flex;flex-direction:column;gap:2px;padding:7px 13px;
+  border-radius:var(--r-sm);border:1px solid var(--border);background:var(--card);
+  cursor:pointer;transition:all .18s;font-size:12.5px;
+  font-family:'Syne',sans-serif;font-weight:600;color:var(--dim)}
+.team-tab:hover{background:var(--card-hi);color:var(--text)}
+.team-tab.active{border-color:var(--gold);color:var(--gold);
+  background:color-mix(in srgb,var(--gold) 9%,transparent)}
+.rev-header{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:20px 24px}
+.rev-team-name{font-family:'Syne',sans-serif;font-weight:800;font-size:22px;color:var(--text)}
+.rev-meta{font-size:11.5px;color:var(--dim);margin-top:3px}
+.rev-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-top:14px}
+.rev-stat{background:rgba(0,0,0,.2);border:1px solid var(--border);border-radius:var(--r-sm);padding:10px 13px}
+.rev-stat-v{font-family:'Syne',sans-serif;font-weight:800;font-size:18px;line-height:1}
+.rev-stat-l{font-size:9.5px;text-transform:uppercase;letter-spacing:.09em;color:var(--dim);font-family:'Syne',sans-serif;margin-top:2px}
+.rev-block{background:var(--card);border:1px solid var(--border);border-radius:var(--r);overflow:hidden}
+.rev-block-head{padding:13px 20px;border-bottom:1px solid var(--border);
+  display:flex;align-items:center;gap:10px}
+.rev-block-icon{font-size:17px}
+.rev-block-title{font-family:'Syne',sans-serif;font-weight:700;font-size:14px;color:var(--text);flex:1}
+.rev-block-body{padding:16px 20px;display:flex;flex-direction:column;gap:13px}
+.rev-field-label{font-size:9.5px;text-transform:uppercase;letter-spacing:.1em;
+  color:var(--teal);font-family:'Syne',sans-serif;font-weight:700;margin-bottom:5px}
+.rev-field-value{font-size:13.5px;color:var(--text);line-height:1.65;
+  background:rgba(0,0,0,.15);border-radius:var(--r-xs);padding:9px 12px;white-space:pre-wrap}
+.rev-field-empty{font-size:12.5px;color:var(--muted);font-style:italic;padding:5px 0}
+.rev-fb-label{font-size:9.5px;text-transform:uppercase;letter-spacing:.1em;
+  color:var(--gold);font-family:'Syne',sans-serif;font-weight:700;margin:9px 0 5px}
+.rev-fb-input{width:100%;background:rgba(245,166,35,.04);
+  border:1px solid color-mix(in srgb,var(--gold) 25%,transparent);
+  border-radius:var(--r-xs);color:var(--text);font-family:'DM Sans',sans-serif;
+  font-size:13px;padding:8px 12px;outline:none;resize:vertical;min-height:72px;
+  transition:border-color .18s;line-height:1.55}
+.rev-fb-input:focus{border-color:var(--gold)}
+.overall-block{background:var(--card);border:1px solid color-mix(in srgb,var(--gold) 22%,transparent);
+  border-radius:var(--r);padding:20px 24px}
+.overall-title{font-family:'Syne',sans-serif;font-weight:800;font-size:15px;color:var(--gold);margin-bottom:14px}
+.overall-row{display:grid;grid-template-columns:1fr 90px;gap:12px;align-items:start;margin-bottom:13px}
+.grade-input{background:rgba(0,0,0,.3);border:1px solid color-mix(in srgb,var(--gold) 28%,transparent);
+  border-radius:var(--r-xs);color:var(--text);font-family:'Syne',sans-serif;
+  font-weight:700;font-size:18px;padding:9px;outline:none;width:100%;text-align:center;transition:border-color .18s}
+.grade-input:focus{border-color:var(--gold)}
+.grade-label{font-size:9.5px;text-transform:uppercase;letter-spacing:.1em;
+  color:var(--dim);font-family:'Syne',sans-serif;margin-top:3px;text-align:center}
+.rev-action-row{display:flex;gap:9px;flex-wrap:wrap}
+.btn-gold{background:linear-gradient(135deg,var(--gold),#c07010);color:#111}
+.btn-gold:hover{opacity:.9}
+
+/* Feedback banner in team view */
+.fb-banner{display:flex;align-items:center;gap:13px;
+  background:color-mix(in srgb,var(--green) 8%,transparent);
+  border:1px solid color-mix(in srgb,var(--green) 28%,transparent);
+  border-radius:var(--r);padding:13px 18px;font-size:13px;color:var(--text)}
+.fb-banner strong{font-family:'Syne',sans-serif;font-weight:700;color:var(--green)}
+.pf-box{display:flex;gap:9px;background:color-mix(in srgb,var(--green) 7%,transparent);
+  border:1px solid color-mix(in srgb,var(--green) 26%,transparent);
+  border-radius:var(--r-xs);padding:9px 12px;margin-top:7px}
+.pf-label{font-size:9px;text-transform:uppercase;letter-spacing:.1em;
+  color:var(--green);font-family:'Syne',sans-serif;font-weight:700;margin-bottom:2px}
+.pf-text{font-size:12.5px;color:var(--text);line-height:1.6}
+
+/* responsive */
+@media(max-width:720px){
+  .stats{grid-template-columns:1fr 1fr}
+  .ctx-grid{grid-template-columns:1fr 1fr}
+  .bmc-grid{grid-template-columns:1fr 1fr}
+  .proc-grid{grid-template-columns:1fr 1fr}
+  .eth-grid{grid-template-columns:1fr 1fr}
+  .fin-grid{grid-template-columns:1fr}
+  .learn-grid{grid-template-columns:1fr}
+  .xp-track{width:90px}.session-label{display:none}.lvl-badge{display:none}
+}
+@media(max-width:480px){
+  .stats{grid-template-columns:1fr}
+  .submit-grid{grid-template-columns:1fr}
+  .rev-stats{grid-template-columns:1fr 1fr}
+}
+</style>
+</head>
+<body>
+
+<div id="app-team">
+  <header class="header" id="hdr"></header>
+  <div class="wrap" id="main"></div>
+  <div class="foot">
+    <div class="foot-card">
+      <div class="foot-ttl">Key Learnings · Session 4</div>
+      <div class="learn-grid">
+        <div class="learn-item"><div class="learn-n">01</div><div>Ein Produkt ist kein Business. Erst die Logik von Wertschöpfung und Erlös macht es tragfähig.</div></div>
+        <div class="learn-item"><div class="learn-n">02</div><div>Unternehmen sind Systeme von Aktivitäten. Odoo macht diese internen Abläufe messbar und steuerbar.</div></div>
+        <div class="learn-item"><div class="learn-n">03</div><div>Verantwortung ist kein Add-on, sondern ein Kern-Feature jedes nachhaltigen Ventures.</div></div>
+        <div class="learn-item"><div class="learn-n">04</div><div>Kapital kauft Zeit zum Lernen. Die Runway entscheidet über die Überlebenschance.</div></div>
+      </div>
+      <div class="credit">Designed by Prof. Thomas Petzold Ph.D. and Claude · 2026</div>
+    </div>
+  </div>
+</div>
+
+<div id="app-prof">
+  <header class="prof-header">
+    <div class="prof-logo">ECL · Session 4</div>
+    <div class="prof-badge">🔐 Dozierende-Ansicht</div>
+    <div style="flex:1"></div>
+    <button class="btn btn-secondary" onclick="exitProfMode()" style="font-size:10.5px;padding:5px 11px">← Team-Ansicht</button>
+  </header>
+  <div class="prof-wrap" id="prof-content"></div>
+</div>
+
+<canvas id="cc"></canvas>
+<div id="toasts"></div>
+
+<script>
+'use strict';
+// ── CONFIG ────────────────────────────────────────────────
+const PROF_PASSWORD = 'ecl2025';
+const APP_VER = '4.0';
+const STORE_KEY = 'ecl-s4-v1';
+
+// ── DATA ──────────────────────────────────────────────────
+const PHASES = [
+  {id:'p0',icon:'🎯',num:'00',hex:'#818CF8',title:'Einstieg & Kernthese',sub:'Vom Produkt zum Business denken',items:[
+    {id:'p0-1',t:'Kernthese verinnerlicht: Ein Produkt kann funktionieren – und trotzdem kein Business sein',tip:'Das ist die härteste Wahrheit dieser Session. Viele Teams haben ein Produkt. Wenige haben ein tragfähiges Unternehmen.'},
+    {id:'p0-2',t:'Leitfrage als Arbeitsanker: „Wie wird aus einem Produkt ein tragfähiges Unternehmen?"',tip:'Diese Frage strukturiert alle fünf Workshops heute.'},
+    {id:'p0-3',t:'Verstanden: Erfolg entsteht an der Schnittstelle von Modell und Realität – nicht im Team, sondern im Markt',tip:'Ein Business entsteht nicht im Team – sondern im Markt. (Context = Realitäts-Check)'},
+    {id:'p0-4',t:'CB Insights Reality Check verarbeitet: Startups scheitern primär an Kapital (38%), Marktbedarf (35%) und Wettbewerb (20%) – selten am Produkt',tip:'Quelle: CB Insights (2026). Implikation: Eure Arbeit heute ist die Antwort auf genau diese drei Scheitergründe.'},
+    {id:'p0-5',t:'Klares Ziel für heute gesetzt: Aus dem Produkt wird ein System mit Logik, Prozessen, Ethik und Finanzen',tip:'Am Ende dieser Session habt ihr nicht mehr nur ein Produkt – ihr habt ein beschreibbares Unternehmen.'},
+  ]},
+  {id:'p1',icon:'🌍',num:'01',hex:'#0DD6D6',title:'Workshop I · Context Canvas',sub:'Das externe Umfeld systematisch verstehen · 20 Min.',items:[
+    {id:'p1-1',t:'Context Canvas Methode verstanden: Externe Kräfte bestimmen den Spielraum des Ventures (Design a Better Business)',tip:'Van Der Pijl, Lokitz & Solomon (2016). Der Canvas macht Annahmen sichtbar und externe Realität greifbar.'},
+    {id:'p1-2',t:'Demografie analysiert: Wer sind die Menschen in eurem Markt – und wie verändern sie sich?',tip:'Altert eure Zielgruppe? Wächst sie? Verändert sich ihr Kaufverhalten? Urbanisierung, Bildungsniveau, Einkommensverteilung.'},
+    {id:'p1-3',t:'Bedürfnisse identifiziert: Welche ungelösten Probleme und Wünsche treiben eure Kunden an?',tip:'Nicht was sie sagen, sondern was sie tun. Welche Workarounds nutzen sie? Was zahlen sie dafür?'},
+    {id:'p1-4',t:'Wettbewerb kartiert: Wer löst das Problem heute – und wer könnte es morgen tun?',tip:'Direkte, indirekte und potenzielle Wettbewerber. Wer hat Kapital, Markt und Motivation, euer Problem auch zu lösen?'},
+    {id:'p1-5',t:'Technologie bewertet: Welche neuen Möglichkeiten entstehen durch technischen Fortschritt?',tip:'Was wird durch KI, neue Hardware oder Plattformverschiebungen plötzlich möglich – oder obsolet?'},
+    {id:'p1-6',t:'Wirtschaft analysiert: Welche ökonomischen Trends beeinflussen Kaufkraft, Kosten und Marktattraktivität?',tip:'Inflation, Zinsniveau, Lohnentwicklung, B2B-Budgets, Konsumstimmung.'},
+    {id:'p1-7',t:'Regulierung geprüft: Welche Gesetze, Normen und Regeln bestimmen den Spielraum eures Ventures?',tip:'DSGVO, EU AI Act, Medizinprodukterecht, Alkohollizenz, Baurecht – je nach Produkt. Regulierung ist keine Fußnote.'},
+    {id:'p1-8',t:'Trends und Unsicherheiten benannt: Was treibt den Markt – und was ist noch unklar?',tip:'Unsicherheiten sind keine Schwäche – sie zu kennen ist ein Vorteil gegenüber Wettbewerbern, die sie ignorieren.'},
+  ]},
+  {id:'p2',icon:'🧩',num:'02',hex:'#F5A623',title:'Workshop II · Business Model Canvas',sub:'Wie greifen Aktivitäten und Erlösströme ineinander · 45 Min.',items:[
+    {id:'p2-1',t:'Business Model Definition verinnerlicht: Ein Geschäftsmodell beschreibt die Logik, wie eine Organisation Wert schafft, liefert und erfasst (Osterwalder & Pigneur)',tip:'Die drei Verben sind entscheidend: schaffen (Value Prop), liefern (Channels & Relations), erfassen (Revenue).'},
+    {id:'p2-2',t:'Kernfrage WER: Zielkunden und primäre Segmente definiert – nicht "alle", sondern konkret benennbar',tip:'Je präziser das Segment, desto stärker das Modell. "Alle" ist keine Zielgruppe.'},
+    {id:'p2-3',t:'Kernfrage WAS: Konkretes Nutzenversprechen formuliert – welches Problem wird wie gelöst?',tip:'Was ist das eine Ding, das der Kunde mit eurem Angebot bekommt, das er ohne euch nicht hat?'},
+    {id:'p2-4',t:'Kernfrage WIE: Kritische Prozesse, Partner und Ressourcen der Wertschöpfung beschrieben',tip:'Was müsst ihr selbst können? Was kauft ihr ein? Was wäre existenzbedrohend, wenn es wegfällt?'},
+    {id:'p2-5',t:'Kernfrage WIEVIEL: Erlöslogik definiert und finanzielle Nachhaltigkeit begründet',tip:'Wie oft zahlt jemand? Wieviel? Welche Kosten entstehen dabei? Ist die Einheit wirtschaftlich sinnvoll?'},
+    {id:'p2-6',t:'Business Model Canvas vollständig ausgefüllt – alle 9 Felder mit konkreten, nicht generischen Inhalten',tip:'Generisch klingende BMC-Felder wie "Social Media Marketing" oder "gutes Produkt" sind wertlos. Spezifisch!'},
+    {id:'p2-7',t:'AI als Kritiker eingesetzt: Geschäftsmodell auf logische Widersprüche, Skalierbarkeit und langfristige Profitabilität geprüft',tip:'Prompt: "Analysiere dieses Geschäftsmodell auf logische Widersprüche, Skalierbarkeit und langfristige Profitabilität." Nicht als Bestätigung nutzen.'},
+    {id:'p2-8',t:'Qualitätskriterium bestanden: Nicht überzeugend klingen – sondern logisch zusammenpassen',tip:'Ein BMC ist konsistent, wenn man keine Fragen mehr hat. Wenn jemand nach dem Lesen noch fragt "Aber wie verdient ihr eigentlich Geld?" – dann ist es nicht fertig.'},
+  ]},
+  {id:'p3',icon:'⚙️',num:'03',hex:'#34D399',title:'Workshop III · Prozessdesign',sub:'Aus der Idee wird ein realer, steuerbarer Ablauf · 30 Min.',items:[
+    {id:'p3-1',t:'Perspektivwechsel vollzogen: Unternehmen sind Systeme von Aktivitäten – nicht Ideen, sondern Abläufe',tip:'Porter (1985): Wettbewerbsvorteile entstehen nicht durch einzelne Entscheidungen, sondern durch das Zusammenspiel aller Aktivitäten.'},
+    {id:'p3-2',t:'Porters Wertschöpfungskette verstanden: Input → Transformation → Output mit Marge als Ergebnis',tip:'Ressourcen → Prozess → Ergebnis. Jede Stufe kostet und schafft Wert. Wo in eurer Kette entsteht die eigentliche Differenzierung?'},
+    {id:'p3-3',t:'Schritt 1 definiert: Kunde & Problem – wer kommt mit welchem konkreten Bedürfnis an euer Venture?',tip:'Nicht die abstrakte Zielgruppe, sondern die konkrete Situation: "Eine Studentin um 23 Uhr, Lärm im WG-Zimmer..."'},
+    {id:'p3-4',t:'Schritt 2 definiert: Transformation – wie entsteht aus dem Input (Kundenproblem + Ressourcen) die Lösung?',tip:'Das ist der Kernprozess eures Unternehmens. Was tut ihr eigentlich? Wer tut es? Wie lang dauert es?'},
+    {id:'p3-5',t:'Schritt 3 definiert: Angebot – wie wird die Lösung geliefert, erlebt und vom Kunden angenommen?',tip:'Delivery, Onboarding, Nutzungserlebnis. Wo kann es scheitern? Was muss reibungslos funktionieren?'},
+    {id:'p3-6',t:'Schritt 4 definiert: Umsatz – wie und wann fließt Geld, und wie ist das in Odoo abgebildet?',tip:'Welches Triggerereignis löst die Zahlung aus? Rechnung nach Lieferung? Abo monatlich? Prepaid?'},
+  ]},
+  {id:'p4',icon:'⚖️',num:'04',hex:'#F472B6',title:'Workshop IV · Ethical Stress Test',sub:'Verantwortung als Kern-Feature · 30 Min.',items:[
+    {id:'p4-1',t:'Ethik als Design-Frage verstanden: Nicht alles was technisch machbar ist, ist auch gesellschaftlich wünschenswert',tip:'Und nicht alles was funktioniert, ist auch verantwortbar. Das ist keine moralische Belehrung, sondern ein strategisches Risiko-Assessment.'},
+    {id:'p4-2',t:'AI4People Framework angewendet (Floridi et al., 2018): 5 Dimensionen ethischer Prüfung',tip:'Wohltun, Nichtschaden, Autonomie, Gerechtigkeit, Erklärbarkeit. Jede Dimension ist eine potenzielle Angriffsfläche für Regulierung, Reputationsschäden oder Kundenverlust.'},
+    {id:'p4-3',t:'Wohltun geprüft: Fördert das Venture aktiv menschliches Wohlergehen – oder nur eigenen Umsatz?',tip:'Was wäre die Welt ohne euer Produkt? Und was wäre sie mit einem missbräuchlich genutzten Produkt?'},
+    {id:'p4-4',t:'Nichtschaden geprüft: Werden Risiken und negative Folgen für Nutzer, Dritte und Gesellschaft minimiert?',tip:'Wer könnte durch euer Produkt zu Schaden kommen – auch wenn ihr das nicht beabsichtigt?'},
+    {id:'p4-5',t:'Autonomie geprüft: Behalten Menschen die Wahlfreiheit und Kontrolle über ihre eigenen Entscheidungen?',tip:'Erzeugt euer Produkt Abhängigkeit? Lock-in? Informationsasymmetrie zugunsten eures Unternehmens?'},
+    {id:'p4-6',t:'Gerechtigkeit geprüft: Ist der Zugang zum Produkt fair und frei von Diskriminierung?',tip:'Wer kann euer Produkt nicht nutzen? Wer wird durch euer Produkt systematisch benachteiligt?'},
+    {id:'p4-7',t:'Erklärbarkeit geprüft: Ist die Funktionsweise des Produkts transparent und für Nutzer nachvollziehbar?',tip:'Besonders relevant bei KI-gestützten Produkten: Was entscheidet der Algorithmus – und warum?'},
+    {id:'p4-8',t:'Gegenmassnahmen geplant: Für identifizierte Risiken konkrete Schritte zur Minimierung benannt',tip:'Ein Risiko ohne Gegenmassnahme ist keine Analyse – das ist ein Problem ohne Plan.'},
+  ]},
+  {id:'p5',icon:'💰',num:'05',hex:'#34D399',title:'Workshop V · Ökonomische Logik',sub:'Wie lange könnt ihr überleben, bis euer Modell funktioniert · 30 Min.',items:[
+    {id:'p5-1',t:'Burn Rate definiert: Monatlicher Netto-Verlust, um das System am Laufen zu halten und Erkenntnisse zu gewinnen',tip:'Was kostet ein Monat eures Ventures? Alle fixen Kosten + variable Kosten bei Minimalumsatz.'},
+    {id:'p5-2',t:'Runway berechnet: Wie viele Monate habt ihr mit vorhandenem oder geplanten Kapital bis Break-Even?',tip:'Runway = Verfügbares Kapital ÷ monatliche Burn Rate. Wenn ihr die Zahl nicht kennt, könnt ihr nicht steuern.'},
+    {id:'p5-3',t:'Einnahmen definiert: Erste, konkrete Umsatzquelle benannt – wer zahlt als erster, wann, wieviel?',tip:'Nicht "wir werden monatlich Abo-Einnahmen haben" – sondern: Wer ist Kunde Nummer 1 und wann unterschreibt er?'},
+    {id:'p5-4',t:'Kostenstruktur geklärt: Größte Kostentreiber identifiziert und nach Fix- und Variabkosten unterschieden',tip:'Fix = zahlt ihr auch ohne Umsatz. Variabel = skaliert mit Umsatz. Je mehr Variabkosten, desto sicherer in der Frühphase.'},
+    {id:'p5-5',t:'Wachstumspfad skizziert: Wie skaliert das Modell und wann sinkt die Abhängigkeit von externem Kapital?',tip:'Was muss passieren, damit ihr weniger Geld verbraucht als ihr einnehmt? In Monaten, nicht in Jahren.'},
+    {id:'p5-6',t:'Finanzierungsform gewählt und begründet: Bootstrapping, Venture Capital oder Revenue-based Financing?',tip:'Bootstrapping = Kontrolle. VC = Tempo. Revenue-based = Flexibilität. Was passt zu eurem Modell und Timing?'},
+    {id:'p5-7',t:'Break-Even oder Runway-Ziel konkret benannt: Bis wann muss das Modell tragen?',tip:'Ein Datum ohne Plan ist ein Wunsch. Ein Plan ohne Datum ist eine Absicht. Ihr braucht beides.'},
+  ]},
+  {id:'p6',icon:'🚀',num:'06',hex:'#818CF8',title:'Pitch Synthese',sub:'Integrierter Pitch: Produkt · Modell · Prozess · Finanzen',items:[
+    {id:'p6-1',t:'Produkt klar: Die Lösung für ein echtes Problem (aus Session 2) präzise formuliert',tip:'Nicht länger als 2 Sätze. Wenn ihr mehr braucht, ist es nicht klar genug.'},
+    {id:'p6-2',t:'Modell klar: Die Logik der Wertschöpfung aus dem Business Model Canvas in einem Satz',tip:'Wer zahlt, warum, wofür, wie oft?'},
+    {id:'p6-3',t:'Prozess klar: Der reale Ablauf von Kundenproblem zu Umsatz in vier Schritten beschreibbar',tip:'Wenn ihr den Prozess nicht beschreiben könnt, könnt ihr ihn auch nicht an jemanden delegieren.'},
+    {id:'p6-4',t:'Finanzen klar: Burn Rate, Runway und Wachstumspfad in Zahlen, nicht in Worten',tip:'Drei Zahlen reichen: Was kostet ein Monat? Wie lange habt ihr? Ab wann trägt es sich?'},
+    {id:'p6-5',t:'Integrierten Pitch auf 90 Sekunden verdichtet, alle vier Dimensionen enthalten, im Team geprobt',tip:'Ein Pitch der funktioniert, muss nicht gut klingen. Er muss klar sein.'},
+  ]},
+];
+
+const CANVASES = {
+  p1: {
+    id:'ctx', icon:'🌍', title:'Context Canvas',
+    desc:'Analysiert euer externes Umfeld. Welche Kräfte von außen bestimmen euren Spielraum? (Design a Better Business · Van Der Pijl et al.)',
+    type:'context',
+    fields:[
+      {id:'ctx_demo',label:'DEMOGRAFIE',hint:'Wer sind die Menschen in eurem Markt und wie verändern sie sich?'},
+      {id:'ctx_needs',label:'BEDÜRFNISSE',hint:'Welche ungelösten Probleme und Wünsche treiben eure Kunden an?'},
+      {id:'ctx_comp',label:'WETTBEWERB',hint:'Wer löst das Problem heute – und wer könnte es morgen tun?'},
+      {id:'ctx_tech',label:'TECHNOLOGIE',hint:'Welche neuen Möglichkeiten entstehen durch technischen Fortschritt?'},
+      {id:'ctx_econ',label:'WIRTSCHAFT',hint:'Welche ökonomischen Trends beeinflussen Kaufkraft und Kosten?'},
+      {id:'ctx_reg',label:'REGULIERUNG',hint:'Welche Gesetze und Regeln bestimmen euren Spielraum?'},
+      {id:'ctx_trends',label:'TRENDS',hint:'Was treibt den Markt? Welche Megatrends sind relevant?'},
+      {id:'ctx_uncert',label:'UNSICHERHEITEN',hint:'Was wisst ihr noch nicht – und was könnte eure Annahmen kippen?'},
+    ]
+  },
+  p2: {
+    id:'bmc', icon:'🧩', title:'Business Model Canvas',
+    desc:'Entwickelt ein konsistentes Geschäftsmodell. Fokus: Value Proposition, Revenue Model & Cost Structure. (Osterwalder & Pigneur, 2010)',
+    type:'bmc',
+    fields:[
+      {id:'bmc_kp',label:'KEY PARTNERS',hint:'Wer sind eure wichtigsten Partner und Lieferanten?'},
+      {id:'bmc_ka',label:'KEY ACTIVITIES',hint:'Welche Aktivitäten sind entscheidend für euren Wert?'},
+      {id:'bmc_kr',label:'KEY RESOURCES',hint:'Welche Ressourcen sind unverzichtbar?'},
+      {id:'bmc_vp',label:'VALUE PROPOSITIONS',hint:'Welchen konkreten Wert schafft ihr für welches Segment?'},
+      {id:'bmc_cr',label:'CUSTOMER RELATIONSHIPS',hint:'Wie gewinnt, haltet und entwickelt ihr Kunden?'},
+      {id:'bmc_ch',label:'CHANNELS',hint:'Wie erreicht und bedient ihr eure Kunden?'},
+      {id:'bmc_cs',label:'CUSTOMER SEGMENTS',hint:'Für wen schafft ihr Wert? Wer sind eure wichtigsten Kunden?'},
+      {id:'bmc_cost',label:'COST STRUCTURE',hint:'Was sind eure grössten Kostentreiber? Fix und variabel?'},
+      {id:'bmc_rev',label:'REVENUE STREAMS',hint:'Wie und wofür zahlen eure Kunden? Welche Preislogik?'},
+    ]
+  },
+  p3: {
+    id:'proc', icon:'⚙️', title:'Prozessdesign',
+    desc:'Beschreibt euren realen Ablauf. Wie wird aus einem Kundenbedürfnis ein fertiges Angebot und schließlich Umsatz? (Porter, 1985)',
+    type:'process',
+    fields:[
+      {id:'proc_1',label:'01 · KUNDE & PROBLEM',hint:'Wer kommt mit welchem konkreten Bedürfnis?'},
+      {id:'proc_2',label:'02 · TRANSFORMATION',hint:'Was tut ihr? Wie entsteht die Lösung aus dem Input?'},
+      {id:'proc_3',label:'03 · ANGEBOT',hint:'Wie wird die Lösung geliefert und erlebt?'},
+      {id:'proc_4',label:'04 · UMSATZ',hint:'Wann und wie fließt Geld? Odoo-Prozess?'},
+    ]
+  },
+  p4: {
+    id:'eth', icon:'⚖️', title:'Ethical Stress Test',
+    desc:'Unterzieht euer Venture einer kritischen ethischen Prüfung. (AI4People Framework · Floridi et al., 2018)',
+    type:'ethics',
+    fields:[
+      {id:'eth_1',label:'01 WOHLTUN',hint:'Fördert die Lösung aktiv das menschliche Wohlergehen?'},
+      {id:'eth_2',label:'02 NICHTSCHADEN',hint:'Werden Risiken und negative Folgen minimiert?'},
+      {id:'eth_3',label:'03 AUTONOMIE',hint:'Behalten Menschen Wahlfreiheit und Kontrolle?'},
+      {id:'eth_4',label:'04 GERECHTIGKEIT',hint:'Ist der Zugang fair und diskriminierungsfrei?'},
+      {id:'eth_5',label:'05 ERKLÄRBARKEIT',hint:'Ist die Funktionsweise transparent und nachvollziehbar?'},
+      {id:'eth_risks',label:'IDENTIFIZIERTE RISIKEN',hint:'Welche ethischen Reibungspunkte und Risiken habt ihr gefunden?'},
+      {id:'eth_counter',label:'GEGENMASSNAHMEN',hint:'Welche konkreten Schritte plant ihr zur Risikominimierung?'},
+    ]
+  },
+  p5: {
+    id:'fin', icon:'💰', title:'Ökonomische Logik',
+    desc:'Definiert eure Einnahmen, Kostenstruktur und Wachstumspfad. Die Kernfrage: Wie lange könnt ihr überleben, bis euer Modell funktioniert?',
+    type:'finance',
+    fields:[
+      {id:'fin_rev',label:'EINNAHMEN',hint:'Woher kommt das erste Geld? Wer zahlt was und wann?'},
+      {id:'fin_cost',label:'KOSTENSTRUKTUR',hint:'Grösste Kostentreiber, fix vs. variabel'},
+      {id:'fin_burn',label:'BURN RATE (EUR/Monat)',hint:'Monatlicher Netto-Verlust in der Frühphase'},
+      {id:'fin_runway',label:'RUNWAY (Monate)',hint:'Wie lange habt ihr mit verfügbarem Kapital?'},
+      {id:'fin_growth',label:'WACHSTUMSPFAD',hint:'Wann und wie wird das Modell profitabel?'},
+      {id:'fin_financing',label:'FINANZIERUNGSFORM',hint:'Bootstrapping / Venture Capital / Revenue-based – und warum?'},
+    ]
+  },
+  p6: {
+    id:'pitch', icon:'🚀', title:'Integrierter Pitch',
+    desc:'Verdichtet alle vier Dimensionen zu einem 90-Sekunden-Pitch. Produkt + Modell + Prozess + Finanzen.',
+    type:'pitch',
+    fields:[
+      {id:'pitch_product',label:'PRODUKT',hint:'Die Lösung für ein echtes Problem (2 Sätze max.)'},
+      {id:'pitch_model',label:'MODELL',hint:'Die Erlöslogik in einem Satz: Wer zahlt, warum, wofür, wie oft?'},
+      {id:'pitch_process',label:'PROZESS',hint:'Wie läuft es ab – von Kundenproblem zu Umsatz?'},
+      {id:'pitch_finance',label:'FINANZEN',hint:'Burn Rate, Runway, Break-Even-Ziel in Zahlen'},
+    ]
+  }
+};
+
+const LEVELS=[
+  {min:0,label:'Blank Canvas',icon:'🎨'},
+  {min:100,label:'Ideen fließen',icon:'💭'},
+  {min:250,label:'Modell entsteht',icon:'🧩'},
+  {min:450,label:'System denken',icon:'⚙️'},
+  {min:700,label:'Fast skalierbar',icon:'📈'},
+  {min:950,label:'Business Ready',icon:'🚀'},
+];
+const QUIPS=['Weiter so! 🔥','Guter Move!','Schritt für Schritt.','System denken! 🧩','Stark!','Business-Logik ✓','Auf Kurs!','Klug! 💡','Wert schöpfen!','Modell schärft sich.'];
+
+// ── STATE ─────────────────────────────────────────────────
+let S={teamName:'Euer Team',productName:'',checked:{},col:{},canvases:{},financing:'',submittedAt:null,feedback:null};
+
+function storeLoad(){try{const d=localStorage.getItem(STORE_KEY);if(d)S={...S,...JSON.parse(d)};}catch{}}
+function storeSave(){try{localStorage.setItem(STORE_KEY,JSON.stringify(S));}catch{}}
+let saveTimer;
+function debouncedSave(){clearTimeout(saveTimer);saveTimer=setTimeout(storeSave,400);}
+
+// ── COMPUTED ──────────────────────────────────────────────
+const totalChecks=()=>PHASES.reduce((a,p)=>a+p.items.length,0);
+const doneChecks=()=>Object.values(S.checked).filter(Boolean).length;
+const totalCanvas=()=>Object.values(CANVASES).reduce((a,c)=>a+c.fields.filter(f=>f.id!=='fin_financing').length,0);
+const doneCanvas=()=>Object.values(CANVASES).reduce((a,c)=>a+c.fields.filter(f=>f.id!=='fin_financing'&&(S.canvases[f.id]||'').trim().length>=10).length,0);
+const xp=()=>doneChecks()*10+doneCanvas()*15;
+const maxXp=()=>totalChecks()*10+totalCanvas()*15;
+const pct=()=>Math.round((doneChecks()+doneCanvas())/(totalChecks()+totalCanvas())*100)||0;
+const level=()=>{let l=LEVELS[0];for(const x of LEVELS)if(xp()>=x.min)l=x;return l;};
+const ppct=(pid)=>{const p=PHASES.find(x=>x.id===pid);const d=p.items.filter(i=>S.checked[i.id]).length;return{d,n:p.items.length,pct:Math.round(d/p.items.length*100)};};
+const cpct=(pid)=>{if(!CANVASES[pid])return{d:0,n:0,pct:0};const c=CANVASES[pid];const n=c.fields.length;const d=c.fields.filter(f=>(S.canvases[f.id]||'').trim().length>=10).length;return{d,n,pct:Math.round(d/n*100)};};
+
+// ── HELPERS ───────────────────────────────────────────────
+function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+function ring(hex,p,r=19){const c=2*Math.PI*r,off=c*(1-p/100);
+  return `<svg viewBox="0 0 50 50" xmlns="http://www.w3.org/2000/svg">
+    <circle cx="25" cy="25" r="${r}" fill="none" stroke="rgba(255,255,255,.08)" stroke-width="3"/>
+    <circle cx="25" cy="25" r="${r}" fill="none" stroke="${hex}" stroke-width="3"
+      stroke-dasharray="${c.toFixed(1)}" stroke-dashoffset="${off.toFixed(1)}"
+      stroke-linecap="round" transform="rotate(-90 25 25)"/>
+  </svg>`;}
+
+// ── RENDER HEADER ─────────────────────────────────────────
+function renderHdr(){
+  const x=xp(),mx=maxXp(),lv=level(),p=Math.round(x/mx*100)||0;
+  document.getElementById('hdr').innerHTML=`
+    <div class="header-row">
+      <div class="logo">Entrepreneurship Challenge Lab</div>
+      <div class="session-label">From Product to Business <small>· Session 4</small></div>
+      <div style="flex:1"></div>
+      <div class="team-wrap">
+        <label>Team</label>
+        <input id="tn" value="${esc(S.teamName)}" placeholder="Teamname…" maxlength="28">
+      </div>
+      <div class="xp-zone">
+        <div class="xp-stack">
+          <div class="xp-meta"><span>XP</span><span id="xp-lbl">${x} / ${mx}</span></div>
+          <div class="xp-track"><div class="xp-fill" style="width:${p}%"></div></div>
+        </div>
+        <div class="lvl-badge">${lv.icon} ${lv.label}</div>
+      </div>
+      ${S.feedback?`<button class="hdr-btn" id="hdr-fb-scroll" style="border-color:var(--green);color:var(--green)">📬 Feedback</button>`:''}
+      <button class="hdr-btn amber" id="hdr-submit">⬇ Zusammenfassung</button>
+      <button class="hdr-btn" id="hdr-load-fb">📬 Feedback laden</button>
+      <button class="hdr-btn" id="rst">Reset</button>
+    </div>
+    <div class="phase-nav">
+      ${PHASES.map(ph=>{const pr=ppct(ph.id);const cp=cpct(ph.id);
+        const allDone=pr.pct===100&&cp.pct===100;
+        const anyDone=pr.d>0||cp.d>0;
+        const cls=anyDone?(allDone?'done':'active'):'';
+        return `<a class="p-pill ${cls}" href="#${ph.id}" style="--pc:${ph.hex}">
+          <span class="dot"></span>${ph.icon} ${ph.num} ${allDone?'✓':(Math.round((pr.d+cp.d)/(pr.n+cp.n)*100)||0)+'%'}
+        </a>`;}).join('')}
+    </div>`;
+  document.getElementById('tn').addEventListener('input',e=>{S.teamName=e.target.value||'Euer Team';debouncedSave();});
+  document.getElementById('rst').addEventListener('click',()=>{
+    if(confirm('Fortschritt zurücksetzen?')){S={teamName:S.teamName,productName:'',checked:{},col:{},canvases:{},financing:'',submittedAt:null,feedback:null};storeSave();renderAll();}});
+  document.getElementById('hdr-submit').addEventListener('click',submitSubmission);
+  document.getElementById('hdr-load-fb').addEventListener('click',loadFeedbackFile);
+  const fbScroll=document.getElementById('hdr-fb-scroll');
+  if(fbScroll) fbScroll.addEventListener('click',()=>document.getElementById('submit-section')?.scrollIntoView({behavior:'smooth'}));
+}
+
+// ── RENDER MAIN ───────────────────────────────────────────
+function renderMain(){
+  const dc=doneChecks(),tc=totalChecks(),dca=doneCanvas(),tca=totalCanvas();
+  let html='';
+
+  if(S.feedback){
+    html+=`<div class="fb-banner"><div style="font-size:22px">📬</div><div>
+      <strong>Feedback von ${esc(S.feedback.profName||'Prof. Petzold')}</strong> erhalten
+      ${S.feedback.grade?` · Note: <strong style="color:var(--gold)">${esc(S.feedback.grade)}</strong>`:''}
+      <br><span style="font-size:11px;color:var(--dim)">Eingegangen: ${new Date(S.feedback.reviewedAt||Date.now()).toLocaleDateString('de-DE')}</span>
+    </div></div>`;
+  }
+
+  html+=`<div style="margin-bottom:10px">
+    <label class="ca-label" style="margin-bottom:4px">Produktname (aus Session 2)</label>
+    <input class="ca-input" id="prod-name" placeholder="z.B. DOOOZE, AshBuddy, REMI…" value="${esc(S.productName)}" style="max-width:320px">
+  </div>`;
+
+  html+=`<div class="stats">
+    <div class="stat"><div class="stat-v" style="color:var(--teal)">${dc}<em> / ${tc}</em></div><div class="stat-l">Checks erledigt</div></div>
+    <div class="stat"><div class="stat-v" style="color:var(--gold)">${dca}<em> / ${tca}</em></div><div class="stat-l">Canvas-Felder</div></div>
+    <div class="stat"><div class="stat-v">${tc+tca-dc-dca}</div><div class="stat-l">Noch offen</div></div>
+    <div class="stat"><div class="stat-v" style="color:var(--green)">${pct()}<em>%</em></div><div class="stat-l">Gesamtfortschritt</div></div>
+  </div>`;
+
+  PHASES.forEach(ph=>{
+    const pr=ppct(ph.id);const cp=cpct(ph.id);const isCol=!!S.col[ph.id];
+    const allDone=pr.pct===100&&cp.pct===100;
+    const inProg=(pr.d>0||cp.d>0)&&!allDone;
+    const combinedPct=pr.n+cp.n>0?Math.round((pr.d+cp.d)/(pr.n+cp.n)*100):0;
+    const canvas=CANVASES[ph.id];
+    const fb=S.feedback?.feedback?.[ph.id];
+    html+=`<div class="pc ${isCol?'collapsed':''} ${allDone?'complete':''} ${inProg?'in-progress':''}"
+      id="${ph.id}" style="--pc:${ph.hex}">
+      <div class="ph" data-pid="${ph.id}" data-num="${ph.num}">
+        <div class="ph-icon">${ph.icon}</div>
+        <div class="ph-meta">
+          <div class="ph-label">Phase ${ph.num}</div>
+          <div class="ph-title">${ph.title}</div>
+          <div class="ph-sub">${ph.sub}${canvas?` · <span style="color:${cp.pct===100?'var(--green)':'var(--pc)'}">📋 ${cp.d}/${cp.n} Felder</span>`:''}</div>
+        </div>
+        <div class="ring-wrap">${ring(ph.hex,combinedPct)}<div class="ring-pct">${combinedPct}%</div></div>
+        <div class="chevron">▾</div>
+      </div>
+      <div class="done-badge ${allDone?'show':''}">✓ Phase ${ph.num} vollständig abgeschlossen</div>
+      <div class="ph-div"></div>
+      <div class="pb">
+        ${ph.items.map(item=>{const chk=!!S.checked[item.id];
+          return `<div class="ci ${chk?'done':''}" data-id="${item.id}">
+            <div class="ci-row">
+              <div class="cb ${chk?'on':''}"></div>
+              <div class="ci-txt">${item.t}</div>
+              ${item.tip?`<button class="tip-btn">💬</button>`:''}
+            </div>
+            ${item.tip?`<div class="tip-box">${esc(item.tip)}</div>`:''}
+          </div>`;}).join('')}
+        ${canvas?renderCanvas(ph.id,canvas,fb):''}
+      </div>
+    </div>`;
+  });
+
+  html+=renderSubmitSection();
+  document.getElementById('main').innerHTML=html;
+
+  document.getElementById('prod-name')?.addEventListener('input',e=>{S.productName=e.target.value;debouncedSave();});
+  attachMainEvents();
+}
+
+// ── RENDER CANVAS ─────────────────────────────────────────
+function renderCanvas(pid,canvas,fb){
+  const isCol=!!S.col['ca_'+pid];
+  const cp=cpct(pid);
+  const done=cp.pct===100;
+  const pc=PHASES.find(p=>p.id===pid)?.hex||'var(--teal)';
+
+  let inner='';
+  if(canvas.type==='context'){
+    // Layout: 3x3 grid – outer 8 cells surround the venture center
+    // Row1: DEMO | BEDUERFNISSE | WETTBEWERB
+    // Row2: TECH | [VENTURE]    | WIRTSCHAFT
+    // Row3: REG  | TRENDS       | UNSICHERHEITEN
+    inner=`<div class="ctx-grid">
+      ${renderCtxCell(canvas,'ctx_demo',pc)}
+      ${renderCtxCell(canvas,'ctx_needs',pc)}
+      ${renderCtxCell(canvas,'ctx_comp',pc)}
+      ${renderCtxCell(canvas,'ctx_tech',pc)}
+      <div class="ctx-cell center" style="--pc:${pc}">
+        <div class="ctx-cell-label">EUER VENTURE</div>
+        <div class="ctx-venture-name">${esc(S.productName||S.teamName)}</div>
+        <div class="ctx-hint">Session 4</div>
+      </div>
+      ${renderCtxCell(canvas,'ctx_econ',pc)}
+      ${renderCtxCell(canvas,'ctx_reg',pc)}
+      ${renderCtxCell(canvas,'ctx_trends',pc)}
+      ${renderCtxCell(canvas,'ctx_uncert',pc)}
+    </div>`;
+  } else if(canvas.type==='bmc'){
+    inner=`<div class="bmc-grid">
+      <div class="bmc-cell span2h" style="grid-row:1/3;grid-column:1/2">${renderBmcCell(canvas,'bmc_kp','PARTNERS',pc)}</div>
+      <div class="bmc-cell" style="grid-column:2/3">${renderBmcCell(canvas,'bmc_ka','ACTIVITIES',pc)}</div>
+      <div class="bmc-cell" style="grid-column:3/4;grid-row:1/3">${renderBmcCell(canvas,'bmc_vp','VALUE PROPOSITIONS',pc,true)}</div>
+      <div class="bmc-cell" style="grid-column:4/5">${renderBmcCell(canvas,'bmc_cr','RELATIONSHIPS',pc)}</div>
+      <div class="bmc-cell" style="grid-column:5/6;grid-row:1/3">${renderBmcCell(canvas,'bmc_cs','SEGMENTS',pc)}</div>
+      <div class="bmc-cell" style="grid-column:2/3">${renderBmcCell(canvas,'bmc_kr','RESOURCES',pc)}</div>
+      <div class="bmc-cell" style="grid-column:4/5">${renderBmcCell(canvas,'bmc_ch','CHANNELS',pc)}</div>
+      <div class="bmc-cell bottom" style="grid-column:1/3;grid-row:3">${renderBmcCell(canvas,'bmc_cost','COST STRUCTURE',pc)}</div>
+      <div class="bmc-cell bottom" style="grid-column:3/6;grid-row:3">${renderBmcCell(canvas,'bmc_rev','REVENUE STREAMS',pc)}</div>
+    </div>`;
+  } else if(canvas.type==='process'){
+    inner=`<div class="proc-grid">
+      ${canvas.fields.map((f,i)=>{const val=S.canvases[f.id]||'';const len=val.trim().length;
+        return `<div class="proc-step" style="--pc:${pc}">
+          <div class="proc-num">0${i+1}</div>
+          <div class="proc-title">${f.label}</div>
+          <div class="ca-hint">${f.hint}</div>
+          <textarea class="ca-textarea" data-cid="${f.id}" rows="4" placeholder="${f.hint}">${esc(val)}</textarea>
+          <div class="ca-char ${len>=10?'ok':''}">${len}z${len>=10?' ✓':''}</div>
+        </div>`;}).join('')}
+    </div>`;
+  } else if(canvas.type==='ethics'){
+    const main5=canvas.fields.slice(0,5);const extra2=canvas.fields.slice(5);
+    inner=`<div class="eth-grid">
+      ${main5.map((f,i)=>{const val=S.canvases[f.id]||'';const len=val.trim().length;
+        return `<div class="eth-cell">
+          <div class="eth-num">0${i+1}</div>
+          <div class="eth-label">${f.label.replace(/^\d+ /,'')}</div>
+          <div class="ca-hint">${f.hint}</div>
+          <textarea class="ca-textarea" data-cid="${f.id}" rows="4" placeholder="${f.hint}">${esc(val)}</textarea>
+          <div class="ca-char ${len>=10?'ok':''}">${len}z${len>=10?' ✓':''}</div>
+        </div>`;}).join('')}
+    </div>
+    <div class="eth-extra">
+      ${extra2.map(f=>{const val=S.canvases[f.id]||'';const len=val.trim().length;
+        return `<div>
+          <label class="ca-label">${f.label}<span class="req">*</span></label>
+          <div class="ca-hint">${f.hint}</div>
+          <textarea class="ca-textarea" data-cid="${f.id}" rows="4" placeholder="${f.hint}">${esc(val)}</textarea>
+          <div class="ca-char ${len>=10?'ok':''}">${len}z${len>=10?' ✓':''}</div>
+        </div>`;}).join('')}
+    </div>`;
+  } else if(canvas.type==='finance'){
+    const main3=canvas.fields.slice(0,3);const mid2=canvas.fields.slice(3,5);const fin1=canvas.fields[5];
+    inner=`<div class="fin-grid">
+      ${main3.map(f=>{const val=S.canvases[f.id]||'';const len=val.trim().length;
+        return `<div class="fin-cell">
+          <div class="fin-label">${f.label}</div>
+          <div class="ca-hint">${f.hint}</div>
+          <textarea class="ca-textarea" data-cid="${f.id}" rows="4" placeholder="${f.hint}">${esc(val)}</textarea>
+          <div class="ca-char ${len>=10?'ok':''}">${len}z${len>=10?' ✓':''}</div>
+        </div>`;}).join('')}
+    </div>
+    <div class="fin-grid" style="margin-top:8px">
+      ${mid2.map(f=>{const val=S.canvases[f.id]||'';const len=val.trim().length;
+        return `<div class="fin-cell">
+          <div class="fin-label">${f.label}</div>
+          <div class="ca-hint">${f.hint}</div>
+          <textarea class="ca-textarea" data-cid="${f.id}" rows="4" placeholder="${f.hint}">${esc(val)}</textarea>
+          <div class="ca-char ${len>=10?'ok':''}">${len}z${len>=10?' ✓':''}</div>
+        </div>`;}).join('')}
+      <div class="fin-cell">
+        <div class="fin-label">${fin1.label}</div>
+        <div class="ca-hint">${fin1.hint}</div>
+        <div class="fin-chip-row">
+          ${['Bootstrapping','Venture Capital','Revenue-based'].map(opt=>
+            `<div class="fin-chip ${S.financing===opt?'selected':''}" data-fin="${opt}">${opt}</div>`).join('')}
+        </div>
+        <textarea class="ca-textarea" data-cid="${fin1.id}" rows="2" placeholder="Warum diese Wahl?" style="margin-top:8px">${esc(S.canvases[fin1.id]||'')}</textarea>
+      </div>
+    </div>`;
+  } else if(canvas.type==='pitch'){
+    inner=`<div style="display:grid;grid-template-columns:1fr 1fr;gap:9px">
+      ${canvas.fields.map(f=>{const val=S.canvases[f.id]||'';const len=val.trim().length;
+        return `<div>
+          <label class="ca-label">${f.label}<span class="req">*</span></label>
+          <div class="ca-hint">${f.hint}</div>
+          <textarea class="ca-textarea" data-cid="${f.id}" rows="4" placeholder="${f.hint}">${esc(val)}</textarea>
+          <div class="ca-char ${len>=10?'ok':''}">${len}z${len>=10?' ✓':''}</div>
+        </div>`;}).join('')}
+    </div>`;
+  }
+
+  // Prof feedback for this phase
+  let fbHtml='';
+  if(fb){
+    fbHtml=`<div class="pf-box" style="margin-top:10px">
+      <div style="font-size:18px">💬</div>
+      <div><div class="pf-label">Feedback: ${esc(S.feedback.profName||'Dozent:in')}</div>
+      <div class="pf-text">${esc(fb)}</div></div>
+    </div>`;
+  }
+
+  return `<div class="canvas-section ${done?'ca-complete':''} ${isCol?'ca-collapsed':''}" data-capid="${pid}" style="--pc:${pc}">
+    <div class="canvas-head">
+      <div class="canvas-badge">📋 Canvas</div>
+      <div class="canvas-title">${canvas.title}</div>
+      <div class="canvas-prog" style="color:${done?'var(--green)':'var(--dim)'}">${cp.d}/${cp.n}${done?' ✓':''}</div>
+      <div class="canvas-chev">▾</div>
+    </div>
+    <div class="canvas-body">
+      <div class="canvas-desc">${canvas.desc}</div>
+      ${inner}
+      ${fbHtml}
+    </div>
+  </div>`;
+}
+
+function renderCtxCell(canvas,fid,pc){
+  const f=canvas.fields.find(x=>x.id===fid);if(!f)return '';
+  const val=S.canvases[fid]||'';const len=val.trim().length;
+  return `<div class="ctx-cell">
+    <div class="ctx-cell-label" style="color:${pc}">${f.label}</div>
+    <textarea class="ca-textarea" data-cid="${fid}" rows="4" placeholder="${f.hint}">${esc(val)}</textarea>
+    <div class="ca-char ${len>=10?'ok':''}">${len}z${len>=10?' ✓':''}</div>
+  </div>`;
+}
+
+function renderBmcCell(canvas,fid,label,pc,isVP=false){
+  const f=canvas.fields.find(x=>x.id===fid);if(!f)return '';
+  const val=S.canvases[fid]||'';const len=val.trim().length;
+  return `<div class="${isVP?'bmc-label vp':'bmc-label'}">${label}</div>
+    <textarea class="ca-textarea" data-cid="${fid}" rows="5" placeholder="${f.hint}" style="min-height:50px">${esc(val)}</textarea>
+    <div class="ca-char ${len>=10?'ok':''}">${len}z${len>=10?' ✓':''}</div>`;
+}
+
+// ── RENDER SUBMIT ─────────────────────────────────────────
+function renderSubmitSection(){
+  const dc=doneChecks(),tc=totalChecks(),dca=doneCanvas(),tca=totalCanvas();
+  const fb=S.feedback;
+  return `<div class="submit-area" id="submit-section">
+    <div class="submit-title">📋 Zusammenfassung herunterladen</div>
+    <div class="submit-sub">Ladet eure vollständige Bearbeitung herunter und schickt sie dem Dozenten. Das Dokument enthält alle ausgefüllten Canvases und euren Fortschritt.</div>
+    <div class="submit-grid">
+      <div class="sg-item"><div class="sg-v" style="color:var(--gold)">${dca}<em> / ${tca}</em></div><div class="sg-l">Canvas-Felder ausgefüllt</div></div>
+      <div class="sg-item"><div class="sg-v" style="color:var(--teal)">${dc}<em> / ${tc}</em></div><div class="sg-l">Checklisten-Punkte</div></div>
+    </div>
+    <button class="btn btn-primary" id="btn-submit">⬇ Zusammenfassung herunterladen</button>
+    <button class="btn btn-secondary" id="btn-load-fb2" style="margin-left:8px">📬 Feedback laden</button>
+    ${S.submittedAt?`<div class="submit-note">✓ Zuletzt heruntergeladen: ${new Date(S.submittedAt).toLocaleString('de-DE')} · Bitte per Mail einreichen.</div>`:''}
+    ${fb?`<div class="pf-box" style="margin-top:14px">
+      <div style="font-size:20px">🎓</div>
+      <div><div class="pf-label">Gesamtfeedback von ${esc(fb.profName||'Prof. Petzold')}</div>
+      <div class="pf-text">${esc(fb.overallFeedback||'(kein Gesamtfeedback)')}</div>
+      ${fb.grade?`<div style="margin-top:7px;font-family:'Syne',sans-serif;font-weight:700;color:var(--gold)">Note: ${esc(fb.grade)}</div>`:''}
+      </div>
+    </div>`:''}
+  </div>`;
+}
+
+// ── EVENTS ────────────────────────────────────────────────
+let prevDone={};
+function attachMainEvents(){
+  document.querySelectorAll('.ci').forEach(el=>{
+    el.addEventListener('click',e=>{if(e.target.closest('.tip-btn'))return;toggleCheck(el.dataset.id);});});
+  document.querySelectorAll('.tip-btn').forEach(btn=>{
+    btn.addEventListener('click',e=>{e.stopPropagation();btn.closest('.ci').querySelector('.tip-box')?.classList.toggle('open');});});
+  document.querySelectorAll('.ph').forEach(h=>{
+    h.addEventListener('click',()=>{const pid=h.dataset.pid;S.col[pid]=!S.col[pid];storeSave();renderMain();});});
+  document.querySelectorAll('.canvas-head').forEach(h=>{
+    h.addEventListener('click',()=>{const pid=h.closest('.canvas-section').dataset.capid;
+      S.col['ca_'+pid]=!S.col['ca_'+pid];storeSave();renderMain();});});
+  document.querySelectorAll('.ca-textarea,.ca-input').forEach(el=>{
+    el.addEventListener('input',e=>{
+      const cid=e.target.dataset.cid;if(!cid)return;
+      S.canvases[cid]=e.target.value;debouncedSave();
+      const len=(e.target.value||'').trim().length;const ok=len>=10;
+      const cc=e.target.nextElementSibling;
+      if(cc?.classList.contains('ca-char')){cc.textContent=len+'z'+(ok?' ✓':'');cc.classList.toggle('ok',ok);}
+      // Update canvas prog badge
+      const sec=e.target.closest('.canvas-section');
+      if(sec){const cp2=cpct(sec.dataset.capid);
+        const prog=sec.querySelector('.canvas-prog');
+        if(prog){prog.textContent=cp2.d+'/'+cp2.n+(cp2.pct===100?' ✓':'');
+          prog.style.color=cp2.pct===100?'var(--green)':'var(--dim)';}
+        sec.classList.toggle('ca-complete',cp2.pct===100);}
+      document.querySelector('#xp-lbl').textContent=xp()+' / '+maxXp();
+      document.querySelector('.xp-fill').style.width=Math.round(xp()/maxXp()*100)+'%';
+    });});
+  // Finance chips
+  document.querySelectorAll('.fin-chip').forEach(chip=>{
+    chip.addEventListener('click',()=>{S.financing=chip.dataset.fin;debouncedSave();
+      document.querySelectorAll('.fin-chip').forEach(c=>c.classList.toggle('selected',c.dataset.fin===S.financing));});});
+  document.getElementById('btn-submit')?.addEventListener('click',submitSubmission);
+  document.getElementById('btn-load-fb2')?.addEventListener('click',loadFeedbackFile);
+}
+
+// ── TOGGLE CHECK ──────────────────────────────────────────
+function toggleCheck(id){
+  const was=!!S.checked[id];S.checked[id]=!was;
+  const ph=PHASES.find(p=>p.items.some(i=>i.id===id));
+  if(!was){
+    toast(QUIPS[Math.floor(Math.random()*QUIPS.length)],ph.hex);
+    const pr=ppct(ph.id);const cp=cpct(ph.id);
+    if(pr.pct===100&&cp.pct===100&&!prevDone[ph.id])
+      setTimeout(()=>toast(`🎉 Phase ${ph.num} – „${ph.title}" komplett!`,ph.hex,true),350);
+    if(doneChecks()===totalChecks()&&doneCanvas()===totalCanvas()) setTimeout(()=>confetti(),600);
+  }
+  prevDone[ph.id]=ppct(ph.id).pct===100&&cpct(ph.id).pct===100;
+  storeSave();renderAll();
+}
+
+// ── SUBMIT ────────────────────────────────────────────────
+function submitSubmission(){
+  const payload={exportedAt:new Date().toISOString(),teamName:S.teamName,productName:S.productName,
+    progress:{checks:doneChecks(),totalChecks:totalChecks(),canvasFields:doneCanvas(),totalCanvasFields:totalCanvas()},
+    contextCanvas:{},businessModel:{},prozess:{},ethicsTest:{},oekonomischeLogik:{},pitch:{}};
+
+  const map={ctx:'contextCanvas',bmc:'businessModel',proc:'prozess',eth:'ethicsTest',fin:'oekonomischeLogik',pitch:'pitch'};
+  Object.entries(CANVASES).forEach(([pid,ca])=>{
+    const key=map[ca.id]||ca.id;
+    ca.fields.forEach(f=>{payload[key][f.label]=(S.canvases[f.id]||'').trim()||'(nicht ausgefüllt)';});
+    if(ca.id==='fin') payload[key]['Finanzierungsform (gewählt)']=S.financing||'(nicht gewählt)';
+  });
+
+  const json=JSON.stringify(payload,null,2);
+  const blob=new Blob([json],{type:'application/json'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  const date=new Date().toISOString().slice(0,10).replace(/-/g,'');
+  a.href=url; a.download=`ECL_S4_${(S.teamName||'Team').replace(/\s+/g,'_')}_${date}.json`;
+  document.body.appendChild(a);a.click();document.body.removeChild(a);
+  setTimeout(()=>URL.revokeObjectURL(url),5000);
+  S.submittedAt=new Date().toISOString();storeSave();renderMain();
+  toast('✅ Zusammenfassung heruntergeladen – bitte einreichen!','#F5A623',true);
+}
+
+function loadFeedbackFile(){
+  const inp=document.createElement('input');inp.type='file';inp.accept='.json';
+  inp.onchange=e=>{const f=e.target.files[0];if(!f)return;
+    const r=new FileReader();r.onload=ev=>{try{
+      const d=JSON.parse(ev.target.result);
+      if(d._type==='ecl-s4-feedback'){S.feedback=d;storeSave();renderAll();toast('📬 Feedback geladen!','#34D399',true);}
+      else toast('❌ Keine gültige S4-Feedback-Datei','#F87171',true);
+    }catch{toast('❌ Fehler beim Laden','#F87171',true);}};r.readAsText(f);};
+  inp.click();
+}
+
+// ── TOAST & CONFETTI ─────────────────────────────────────
+function toast(msg,color='#0DD6D6',big=false){
+  const c=document.getElementById('toasts');const el=document.createElement('div');
+  el.className='toast'+(big?' big':'');el.style.borderLeftColor=color;el.textContent=msg;
+  c.appendChild(el);setTimeout(()=>el.remove(),3200);}
+function confetti(){const cv=document.getElementById('cc');const ctx=cv.getContext('2d');
+  cv.width=innerWidth;cv.height=innerHeight;
+  const cols=['#818CF8','#0DD6D6','#F5A623','#34D399','#F472B6','#fff'];
+  const pts=Array.from({length:130},()=>({x:Math.random()*cv.width,y:-12,
+    w:Math.random()*11+4,h:Math.random()*5+3,col:cols[Math.floor(Math.random()*cols.length)],
+    vx:(Math.random()-.5)*5,vy:Math.random()*3+1.5,rot:Math.random()*360,vr:(Math.random()-.5)*9,op:1}));
+  let f=0;function draw(){ctx.clearRect(0,0,cv.width,cv.height);
+    pts.forEach(p=>{p.x+=p.vx;p.y+=p.vy;p.vy+=.04;p.rot+=p.vr;
+      if(f>100)p.op=Math.max(0,p.op-.012);
+      ctx.save();ctx.translate(p.x,p.y);ctx.rotate(p.rot*Math.PI/180);
+      ctx.globalAlpha=p.op;ctx.fillStyle=p.col;ctx.fillRect(-p.w/2,-p.h/2,p.w,p.h);ctx.restore();});
+    f++;if(f<220&&pts.some(p=>p.op>0))requestAnimationFrame(draw);
+    else ctx.clearRect(0,0,cv.width,cv.height);}
+  draw();toast('🏆 Session 4 abgeschlossen! Business Ready!','#F5A623',true);}
+
+function renderAll(){PHASES.forEach(p=>{prevDone[p.id]=ppct(p.id).pct===100&&cpct(p.id).pct===100;});renderHdr();renderMain();}
+
+// ── PROFESSOR MODE ────────────────────────────────────────
+let PS={authed:false,profName:'Prof. Petzold',submissions:[],activeIdx:0};
+
+function initProfMode(){
+  document.getElementById('app-team').style.display='none';
+  document.getElementById('app-prof').style.display='block';
+  try{if(sessionStorage.getItem('ecl-prof-auth')==='1')PS.authed=true;
+    const n=sessionStorage.getItem('ecl-prof-name');if(n)PS.profName=n;}catch{}
+  renderProf();
+}
+function exitProfMode(){window.location.href=window.location.pathname;}
+
+function renderProf(){
+  const wrap=document.getElementById('prof-content');
+  if(!PS.authed){wrap.innerHTML=renderProfGate();attachProfGateEvents();return;}
+  wrap.innerHTML=PS.submissions.length?renderProfDash():renderProfUpload();
+  attachProfEvents();
+}
+
+function renderProfGate(){return `<div class="prof-gate">
+  <h2>🔐 Dozierende-Ansicht</h2>
+  <p>Session 4 Team-Abgaben einsehen und Feedback hinterlassen.</p>
+  <input type="password" id="prof-pw" placeholder="Passwort…" autocomplete="off">
+  <button class="btn btn-gold" id="prof-login-btn" style="width:100%;justify-content:center;margin-top:4px">Einloggen</button>
+  <div class="prof-gate-err" id="pw-err"></div>
+  <div style="margin-top:18px;font-size:11px;color:var(--muted)">Passwort ändern: <code style="color:var(--gold)">PROF_PASSWORD</code> im Quellcode.</div>
+</div>`;}
+
+function attachProfGateEvents(){
+  const go=()=>{const pw=document.getElementById('prof-pw')?.value||'';
+    if(pw===PROF_PASSWORD){PS.authed=true;try{sessionStorage.setItem('ecl-prof-auth','1');}catch{}renderProf();}
+    else{const e=document.getElementById('pw-err');if(e)e.textContent='Falsches Passwort.';}};
+  document.getElementById('prof-login-btn')?.addEventListener('click',go);
+  document.getElementById('prof-pw')?.addEventListener('keydown',e=>{if(e.key==='Enter')go();});}
+
+function renderProfUpload(){return `<div style="max-width:560px;margin:0 auto">
+  <div style="margin-bottom:26px">
+    <div style="font-family:'Syne',sans-serif;font-weight:800;font-size:21px;color:var(--text);margin-bottom:5px">Session 4 Abgaben laden</div>
+    <div style="font-size:13.5px;color:var(--dim)">Alle JSON-Dateien der Teams auf einmal laden – mehrere gleichzeitig wählbar.</div>
+  </div>
+  <div class="drop-zone" id="dropzone">
+    <div class="drop-zone-icon">📂</div>
+    <div class="drop-zone-title">Abgaben hierher ziehen</div>
+    <div class="drop-zone-sub">oder klicken · <strong style="color:var(--gold)">ECL_S4_[Team]_[Datum].json</strong></div>
+  </div>
+  <input type="file" id="prof-file" accept=".json" multiple style="display:none">
+  <div style="display:flex;align-items:center;gap:8px;margin-top:13px">
+    <span class="prof-name-label">Ihr Name:</span>
+    <input class="prof-name-input" id="prof-name-input" placeholder="Prof. Petzold" value="${esc(PS.profName)}">
+  </div>
+  <div style="margin-top:11px;font-size:11px;color:var(--muted)">Alle Daten bleiben lokal im Browser.</div>
+</div>`;}
+
+function renderProfDash(){
+  const active=PS.submissions[PS.activeIdx];if(!active)return '';
+  const d=active.data;
+
+  const teamBar=PS.submissions.map((s,i)=>`<button class="team-tab ${i===PS.activeIdx?'active':''}" data-idx="${i}">
+    <span>${esc(s.data.teamName||'Team '+(i+1))}</span>
+    <span style="font-size:9.5px;opacity:.65">${s.data.productName||''}</span>
+  </button>`).join('');
+
+  const SECTION_LABELS={contextCanvas:'🌍 Context Canvas',businessModel:'🧩 Business Model Canvas',
+    prozess:'⚙️ Prozessdesign',ethicsTest:'⚖️ Ethical Stress Test',oekonomischeLogik:'💰 Ökonomische Logik',pitch:'🚀 Integrierter Pitch'};
+
+  let blocks='';
+  Object.entries(SECTION_LABELS).forEach(([key,label])=>{
+    const section=d[key]||{};
+    const fb=active.feedback[key]||'';
+    blocks+=`<div class="rev-block">
+      <div class="rev-block-head"><div class="rev-block-icon">${label.slice(0,2)}</div>
+        <div class="rev-block-title">${label.slice(3)}</div></div>
+      <div class="rev-block-body">
+        ${Object.entries(section).map(([fld,val])=>`<div>
+          <div class="rev-field-label">${esc(fld)}</div>
+          ${val&&val!=='(nicht ausgefüllt)'?`<div class="rev-field-value">${esc(val)}</div>`:`<div class="rev-field-empty">Nicht ausgefüllt</div>`}
+        </div>`).join('')}
+        <div class="rev-fb-label">💬 Ihr Feedback zu diesem Abschnitt</div>
+        <textarea class="rev-fb-input" data-fbkey="${key}" placeholder="Feedback zu ${label.slice(3)}…">${esc(fb)}</textarea>
+      </div>
+    </div>`;});
+
+  return `<div class="prof-toolbar">
+    <div style="display:flex;align-items:center;gap:6px">
+      <span class="prof-name-label">Ihr Name:</span>
+      <input class="prof-name-input" id="prof-name-input" value="${esc(PS.profName)}" placeholder="Prof. Petzold">
+    </div>
+    <div style="display:flex;gap:7px;flex-wrap:wrap">
+      <button class="btn btn-secondary" id="add-more-btn" style="font-size:10.5px;padding:5px 10px">+ Weitere laden</button>
+      <button class="btn btn-gold" onclick="exportFeedback()">⬇ Feedback speichern</button>
+    </div>
+  </div>
+  <input type="file" id="prof-file-more" accept=".json" multiple style="display:none">
+  <div class="team-tabs">${teamBar}</div>
+  <div class="rev-header">
+    <div class="rev-team-name">${esc(d.teamName||'?')}</div>
+    <div class="rev-meta">${esc(d.productName||'')} · Eingereicht: ${new Date(d.exportedAt||Date.now()).toLocaleString('de-DE')}</div>
+    <div class="rev-stats">
+      <div class="rev-stat"><div class="rev-stat-v" style="color:var(--teal)">${d.progress?.checks||0}/${d.progress?.totalChecks||0}</div><div class="rev-stat-l">Checks</div></div>
+      <div class="rev-stat"><div class="rev-stat-v" style="color:var(--gold)">${d.progress?.canvasFields||0}/${d.progress?.totalCanvasFields||0}</div><div class="rev-stat-l">Canvas-Felder</div></div>
+      <div class="rev-stat"><div class="rev-stat-v" style="color:var(--green)">${Math.round(((d.progress?.checks||0)+(d.progress?.canvasFields||0))/((d.progress?.totalChecks||1)+(d.progress?.totalCanvasFields||1))*100)}%</div><div class="rev-stat-l">Gesamt</div></div>
+    </div>
+  </div>
+  ${blocks}
+  <div class="overall-block">
+    <div class="overall-title">🎓 Gesamtfeedback & Bewertung</div>
+    <div class="overall-row">
+      <div>
+        <div style="font-size:10.5px;text-transform:uppercase;letter-spacing:.09em;color:var(--dim);font-family:'Syne',sans-serif;font-weight:600;margin-bottom:5px">Gesamtfeedback</div>
+        <textarea class="rev-fb-input" id="overall-fb" rows="5" placeholder="Gesamteindruck, Stärken, kritische Entwicklungsfelder…">${esc(active.overall||'')}</textarea>
+      </div>
+      <div>
+        <input class="grade-input" id="grade-inp" placeholder="1.3" value="${esc(active.grade||'')}">
+        <div class="grade-label">Note (opt.)</div>
+      </div>
+    </div>
+    <div class="rev-action-row">
+      <button class="btn btn-gold" onclick="exportFeedback()">⬇ Feedback als JSON</button>
+      <button class="btn btn-secondary" onclick="exportFeedbackHTML()">🖨️ Druckbarer Bericht</button>
+    </div>
+  </div>`;}
+
+function attachProfEvents(){
+  const dz=document.getElementById('dropzone');const fi=document.getElementById('prof-file');
+  if(dz){dz.addEventListener('click',()=>fi?.click());
+    dz.addEventListener('dragover',e=>{e.preventDefault();dz.classList.add('drag-over');});
+    dz.addEventListener('dragleave',()=>dz.classList.remove('drag-over'));
+    dz.addEventListener('drop',e=>{e.preventDefault();dz.classList.remove('drag-over');readFiles(e.dataTransfer.files);});}
+  if(fi)fi.addEventListener('change',e=>readFiles(e.target.files));
+  const amb=document.getElementById('add-more-btn');const fim=document.getElementById('prof-file-more');
+  if(amb)amb.addEventListener('click',()=>fim?.click());
+  if(fim)fim.addEventListener('change',e=>readFiles(e.target.files));
+  const pni=document.getElementById('prof-name-input');
+  if(pni)pni.addEventListener('input',()=>{PS.profName=pni.value;try{sessionStorage.setItem('ecl-prof-name',PS.profName);}catch{}});
+  document.querySelectorAll('.team-tab').forEach(btn=>{
+    btn.addEventListener('click',()=>{PS.activeIdx=parseInt(btn.dataset.idx)||0;renderProf();
+      document.getElementById('prof-content').scrollIntoView({behavior:'smooth',block:'start'});});});
+  document.querySelectorAll('.rev-fb-input[data-fbkey]').forEach(el=>{
+    el.addEventListener('input',()=>{if(PS.submissions[PS.activeIdx])PS.submissions[PS.activeIdx].feedback[el.dataset.fbkey]=el.value;});});
+  const ofb=document.getElementById('overall-fb');
+  if(ofb)ofb.addEventListener('input',()=>{if(PS.submissions[PS.activeIdx])PS.submissions[PS.activeIdx].overall=ofb.value;});
+  const gi=document.getElementById('grade-inp');
+  if(gi)gi.addEventListener('input',()=>{if(PS.submissions[PS.activeIdx])PS.submissions[PS.activeIdx].grade=gi.value;});}
+
+function readFiles(files){
+  Array.from(files).forEach(file=>{const r=new FileReader();
+    r.onload=ev=>{try{const d=JSON.parse(ev.target.result);
+      const dup=PS.submissions.find(s=>s.data.teamName===d.teamName&&s.data.exportedAt===d.exportedAt);
+      if(!dup){PS.submissions.push({data:d,feedback:{},overall:'',grade:''});
+        PS.activeIdx=PS.submissions.length-1;}
+      renderProf();toast(`✅ ${d.teamName} geladen`,'#34D399',true);
+    }catch{}};r.readAsText(file);});}
+
+function exportFeedback(){
+  const sub=PS.submissions[PS.activeIdx];if(!sub)return;
+  const payload={_type:'ecl-s4-feedback',_version:APP_VER,reviewedAt:new Date().toISOString(),
+    profName:PS.profName||'Prof. Petzold',teamName:sub.data.teamName,
+    feedback:{...sub.feedback},overallFeedback:sub.overall,grade:sub.grade};
+  const blob=new Blob([JSON.stringify(payload,null,2)],{type:'application/json'});
+  const url=URL.createObjectURL(blob);const a=document.createElement('a');
+  a.href=url;a.download=`ECL_S4_${(sub.data.teamName||'Team').replace(/\s+/g,'_')}_FEEDBACK.json`;
+  a.click();URL.revokeObjectURL(url);
+  toast(`✅ Feedback für „${sub.data.teamName}" gespeichert`,'#34D399',true);}
+window.exportFeedback=exportFeedback;
+
+function exportFeedbackHTML(){
+  const sub=PS.submissions[PS.activeIdx];if(!sub)return;
+  const d=sub.data;
+  const SECTION_LABELS={contextCanvas:'Context Canvas',businessModel:'Business Model Canvas',
+    prozess:'Prozessdesign',ethicsTest:'Ethical Stress Test',oekonomischeLogik:'Ökonomische Logik',pitch:'Integrierter Pitch'};
+  let rows='';
+  Object.entries(SECTION_LABELS).forEach(([key,label])=>{
+    const section=d[key]||{};const fb=sub.feedback[key]||'';
+    const fields=Object.entries(section).map(([fld,val])=>`<div style="margin-bottom:12px">
+      <div style="font-size:9.5px;font-weight:700;text-transform:uppercase;color:#0a8a8a;letter-spacing:.09em;margin-bottom:4px">${fld}</div>
+      <div style="background:#f5f8fc;border-radius:6px;padding:9px 12px;font-size:13px;white-space:pre-wrap;line-height:1.6">${val&&val!=='(nicht ausgefüllt)'?val:'(nicht ausgefüllt)'}</div>
+    </div>`).join('');
+    rows+=`<div style="margin-bottom:24px;page-break-inside:avoid">
+      <div style="background:#04080F;color:#fff;padding:11px 16px;border-radius:8px 8px 0 0;font-weight:700;font-size:13px">${label}</div>
+      <div style="border:1px solid #dde6f0;border-top:none;border-radius:0 0 8px 8px;padding:14px 16px">
+        ${fields}
+        ${fb?`<div style="background:#f0faf4;border:1px solid #a7e6c2;border-radius:6px;padding:11px 13px;margin-top:11px">
+          <div style="font-size:9px;font-weight:700;color:#1a7a45;text-transform:uppercase;letter-spacing:.09em;margin-bottom:5px">Feedback: ${PS.profName||'Dozent:in'}</div>
+          <div style="font-size:13px;line-height:1.65;white-space:pre-wrap">${fb}</div>
+        </div>`:''}
+      </div>
+    </div>`;});
+  const html=`<!DOCTYPE html><html lang="de"><head><meta charset="UTF-8"><title>ECL S4 – ${d.teamName}</title>
+  <style>body{font-family:'Helvetica Neue',Arial,sans-serif;max-width:760px;margin:40px auto;padding:0 20px;color:#111}
+  h1{font-size:20px;margin-bottom:3px}h2{font-size:14px;color:#555;font-weight:400;margin:0 0 18px}
+  .meta{background:#f0f0f0;border-radius:8px;padding:11px 15px;margin-bottom:22px;font-size:12.5px}
+  .overall{background:#fffbf0;border:1px solid #f0d080;border-radius:8px;padding:16px 20px;margin-top:22px}
+  @media print{button{display:none}}</style></head><body>
+  <h1>📋 ECL Session 4 · Feedback</h1>
+  <h2>Team: ${d.teamName} · ${d.productName||''}</h2>
+  <div class="meta">
+    <strong>Eingereicht:</strong> ${new Date(d.exportedAt||Date.now()).toLocaleString('de-DE')} &nbsp;·&nbsp;
+    <strong>Bewertet:</strong> ${new Date().toLocaleDateString('de-DE')} &nbsp;·&nbsp;
+    <strong>Bewertet von:</strong> ${PS.profName||'Dozent:in'}
+    ${sub.grade?` &nbsp;·&nbsp; <strong>Note: ${sub.grade}</strong>`:''}
+  </div>
+  ${rows}
+  ${sub.overall?`<div class="overall">
+    <div style="font-weight:700;margin-bottom:7px;color:#8a6000">🎓 Gesamtfeedback</div>
+    <div style="font-size:13.5px;line-height:1.7;white-space:pre-wrap">${sub.overall}</div>
+    ${sub.grade?`<div style="margin-top:14px;font-weight:700;font-size:17px">Note: ${sub.grade}</div>`:''}
+  </div>`:''}
+  <div style="margin-top:30px;padding-top:12px;border-top:1px solid #e0e0e0;font-size:10px;color:#aaa;display:flex;justify-content:space-between">
+    <span>Entrepreneurship Challenge Lab · Prof. Thomas Petzold Ph.D.</span>
+    <span>Designed by Prof. Thomas Petzold Ph.D. and Claude · 2026</span>
+  </div>
+  </body></html>`;
+  const blob=new Blob([html],{type:'text/html'});const url=URL.createObjectURL(blob);const a=document.createElement('a');
+  a.href=url;a.download=`ECL_S4_${(d.teamName||'Team').replace(/\s+/g,'_')}_Feedback.html`;
+  a.click();URL.revokeObjectURL(url);toast('🖨️ Druckbarer Bericht erstellt','#34D399',true);}
+window.exportFeedbackHTML=exportFeedbackHTML;
+
+// ── INIT ──────────────────────────────────────────────────
+(function init(){
+  storeLoad();
+  PHASES.forEach(p=>{prevDone[p.id]=ppct(p.id).pct===100&&cpct(p.id).pct===100;});
+  if(window.location.search.includes('prof'))initProfMode();
+  else renderAll();
+})();
+</script>
+</body>
+</html>
