@@ -605,7 +605,7 @@ const QUIPS=['Weiter so! 🔥','Guter Move!','Schritt für Schritt.','System den
 let S={teamName:'Euer Team',productName:'',checked:{},col:{},canvases:{},financing:'',submittedAt:null,feedback:null};
 
 function storeLoad(){try{const d=localStorage.getItem(STORE_KEY);if(d)S={...S,...JSON.parse(d)};}catch{}}
-function storeSave(){try{localStorage.setItem(STORE_KEY,JSON.stringify(S));}catch{}}
+function storeSave(){try{localStorage.setItem(STORE_KEY,JSON.stringify(S));}catch{}try{showSaved();}catch{}}
 let saveTimer;
 function debouncedSave(){clearTimeout(saveTimer);saveTimer=setTimeout(storeSave,400);}
 
@@ -1257,15 +1257,14 @@ window.exportFeedbackHTML=exportFeedbackHTML;
 })();
 
 // ── AUTOSAVE ENHANCEMENTS ─────────────────────────
-let _siT;
-function showSaved(){
-  const el=document.getElementById('autosave-ind');if(!el)return;
-  el.classList.add('show');clearTimeout(_siT);
-  _siT=setTimeout(()=>el.classList.remove('show'),1800);}
-const _origSave=storeSave;
-function storeSave(){_origSave();showSaved();}
 window.addEventListener('beforeunload',()=>{storeSave();});
 
+
+let _siT;
+function showSaved(){const el=document.getElementById('autosave-ind');if(!el)return;
+  el.classList.add('show');clearTimeout(_siT);_siT=setTimeout(()=>el.classList.remove('show'),1800);}
+
+window.addEventListener('beforeunload',()=>{storeSave();});
 </script>
 </body>
 </html>
