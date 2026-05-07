@@ -392,6 +392,16 @@ body::before{content:'';position:fixed;inset:0;
   .submit-grid{grid-template-columns:1fr}
   .rev-stats{grid-template-columns:1fr 1fr}
 }
+
+/* ── AUTOSAVE INDICATOR ──────────────────────────── */
+#autosave-ind{
+  position:fixed;bottom:18px;left:50%;transform:translateX(-50%) translateY(8px);
+  background:rgba(52,211,153,.13);border:1px solid rgba(52,211,153,.32);
+  color:#34D399;font-size:11px;padding:5px 14px;border-radius:20px;
+  font-family:'Syne',sans-serif;font-weight:700;letter-spacing:.06em;
+  opacity:0;transition:opacity .3s,transform .3s;pointer-events:none;z-index:9997;
+  white-space:nowrap}
+#autosave-ind.show{opacity:1;transform:translateX(-50%) translateY(0)}
 </style>
 </head>
 <body>
@@ -1245,6 +1255,17 @@ window.exportFeedbackHTML=exportFeedbackHTML;
   if(window.location.search.includes('prof'))initProfMode();
   else renderAll();
 })();
+
+// ── AUTOSAVE ENHANCEMENTS ─────────────────────────
+let _siT;
+function showSaved(){
+  const el=document.getElementById('autosave-ind');if(!el)return;
+  el.classList.add('show');clearTimeout(_siT);
+  _siT=setTimeout(()=>el.classList.remove('show'),1800);}
+const _origSave=storeSave;
+function storeSave(){_origSave();showSaved();}
+window.addEventListener('beforeunload',()=>{storeSave();});
+
 </script>
 </body>
 </html>
