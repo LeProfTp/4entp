@@ -124,10 +124,8 @@ body::before{content:'';position:fixed;inset:0;
 .ci:hover{background:rgba(255,255,255,.03)}
 .ci-row{display:flex;align-items:flex-start;gap:10px}
 .cb{width:19px;height:19px;border-radius:5px;flex-shrink:0;border:2px solid var(--muted);
-  background:transparent;margin-top:2px;position:relative;transition:all .2s;cursor:pointer}
+  background:transparent;margin-top:2px;transition:all .2s;cursor:pointer}
 .cb.on{border-color:var(--pc);background:var(--pc)}
-.cb.on::after{content:'';position:absolute;left:3px;top:.5px;width:7.5px;height:10.5px;
-  border:2.5px solid white;border-top:none;border-left:none;transform:rotate(40deg)}
 @keyframes cbPop{0%,100%{transform:scale(1)}40%{transform:scale(1.3)}70%{transform:scale(.92)}}
 .cb.pop{animation:cbPop .28s ease}
 .ci-txt{font-size:13.5px;color:var(--text);transition:all .25s;line-height:1.55;flex:1}
@@ -721,9 +719,10 @@ function renderMain(){
       <div class="ph-div"></div>
       <div class="pb">
         ${ph.items.map(item=>{const chk=!!S.checked[item.id];
+          const svgCheck=`<svg width="11" height="9" viewBox="0 0 11 9" fill="none" style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%)"><polyline points="1,4.5 4,7.5 10,1" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
           return `<div class="ci ${chk?'done':''}" data-id="${item.id}">
             <div class="ci-row">
-              <div class="cb ${chk?'on':''}"></div>
+              <div class="cb ${chk?'on':''}" style="position:relative;display:flex;align-items:center;justify-content:center">${chk?svgCheck:''}</div>
               <div class="ci-txt">${item.t}</div>
               ${item.tip?`<button class="tip-btn">💬</button>`:''}
             </div>
